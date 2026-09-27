@@ -12,8 +12,23 @@ Write-Host "=======================================================" -Foreground
 Write-Host ""
 
 $baseDir = $PSScriptRoot
-if (-not $baseDir) {
-    $baseDir = (Get-Location).Path
+if (-not $baseDir -or -not (Test-Path "$baseDir\desktop\package.json")) {
+    $installTarget = "$HOME\AgentOS-Studio"
+    if (-not (Test-Path "$installTarget\desktop\package.json")) {
+        Write-Host "Fetching AgentOS Studio to $installTarget..." -ForegroundColor Cyan
+        if (Get-Command git -ErrorAction SilentlyContinue) {
+            git clone https://github.com/Developer-For-Git/AgentOS-Studio.git $installTarget
+        } else {
+            Write-Host "Downloading repository archive..." -ForegroundColor Cyan
+            $zipPath = "$env:TEMP\AgentOS-Studio.zip"
+            Invoke-WebRequest -Uri "https://github.com/Developer-For-Git/AgentOS-Studio/archive/refs/heads/main.zip" -OutFile $zipPath
+            Expand-Archive -Path $zipPath -DestinationPath "$env:TEMP\AgentOS-Extract" -Force
+            if (-not (Test-Path (Split-Path $installTarget))) { New-Item -ItemType Directory -Path (Split-Path $installTarget) -Force | Out-Null }
+            Move-Item -Path "$env:TEMP\AgentOS-Extract\AgentOS-Studio-main" -Destination $installTarget -Force
+            Remove-Item $zipPath, "$env:TEMP\AgentOS-Extract" -Recurse -Force -ErrorAction SilentlyContinue
+        }
+    }
+    $baseDir = $installTarget
 }
 
 $distroDir = "$baseDir\distro"

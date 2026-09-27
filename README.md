@@ -7,6 +7,7 @@
 </p>
 
 <p align="center">
+  <a href="#-1-click--1-command-installation-available-"><img src="https://img.shields.io/badge/1--Click%20Install-Available%20%E2%9C%85-brightgreen?style=flat-square" alt="1-Click Install: Available"></a>
   <a href="#-project-status--active-beta"><img src="https://img.shields.io/badge/Status-Active%20Beta%20%7C%20WIP-yellow?style=flat-square" alt="Status: Active Beta"></a>
   <a href="#-license--open-source-philosophy"><img src="https://img.shields.io/badge/License-MIT-orange.svg?style=flat-square" alt="License: MIT"></a>
   <a href="https://microsoft.com/windows"><img src="https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011-blue?style=flat-square&logo=windows" alt="Platform"></a>
@@ -24,32 +25,36 @@
 
 ---
 
-## ⚡ Quickstart & Installation Guide
+## ⚡ 1-Click / 1-Command Installation: **Available ✅**
 
-Get AgentOS Studio and the sandboxed Sub-OS running on Windows in minutes.
+Yes! **A 1-Click / 1-Command automated installer is fully available** for Windows. You do not need to manually configure WSL2, create partitions, or write hardware isolation rules by hand.
 
-### 📋 Prerequisites
-* **Windows 10 (Build 19041+)** or **Windows 11** (64-bit).
-* **WSL2 enabled** with Virtual Machine Platform (`wsl --status`).
-* **Node.js 18+** and **npm** installed on Windows.
+### 🚀 Instant Setup (1-Command in PowerShell)
+Open **PowerShell as Administrator** (Right-click Windows Start Menu → *Terminal (Admin)* or *PowerShell (Admin)*) and run:
 
----
-
-### 🚀 Option A: 1-Command Automated Setup (Recommended)
-Open **PowerShell as Administrator** and run:
 ```powershell
 irm https://raw.githubusercontent.com/Developer-For-Git/AgentOS-Studio/main/install.ps1 | iex
 ```
-This automated script will:
-1. Validate WSL2 virtualization features.
-2. Initialize and configure the isolated **AgentOS Ubuntu 24.04 LTS** microVM.
-3. Apply hardware security rules (`automount = false`, `appendWindowsPath = false`).
-4. Mount the secure `/workspace` partition gateway.
-5. Install and launch the desktop studio.
+
+### ⚙️ What the 1-Click Installer Does Automatically:
+1. 🔍 **Verifies WSL2 & Virtualization:** Checks if WSL2 is enabled; if not, triggers automatic installation.
+2. 📦 **Fetches Repository:** Clones or downloads the complete AgentOS Studio codebase.
+3. 🐧 **Sets Up Sandboxed Sub-OS:** Downloads Ubuntu 24.04 LTS rootfs and imports the isolated `AgentOS` microVM.
+4. 🛡️ **Applies Zero-Trust Hardware Barrier:** Writes `/etc/wsl.conf` with `automount=false` and `appendWindowsPath=false`, unmounting the host `C:\` drive completely.
+5. 📂 **Mounts Secure Gateway:** Bridges only the `/workspace` folder for safe agent file generation.
+6. 💻 **Installs GUI Dependencies:** Sets up Node.js LTS and Electron Studio packages.
+7. 🖥️ **Creates Desktop Shortcut & Launches:** Places an **`AgentOS`** shortcut on your Windows desktop and launches the studio automatically!
 
 ---
 
-### 🛠️ Option B: Step-by-Step Manual Setup
+### 📋 Prerequisites
+* **Windows 10 (Build 19041+)** or **Windows 11** (64-bit).
+* **Virtualization enabled** in your motherboard BIOS/UEFI (SVM / Intel VT-x).
+* **Internet Connection** for the initial Ubuntu rootfs and npm package setup.
+
+---
+
+### 🛠️ Option B: Step-by-Step Manual Setup (For Advanced Developers)
 
 #### Step 1: Clone the Repository
 ```powershell
