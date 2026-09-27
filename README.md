@@ -24,13 +24,49 @@ Apple iOS dark theme featuring organic dark oval background depth, crisp white b
   <img src="./assets/agentos-studio-dashboard.png" width="92%" alt="System Dashboard">
 </p>
 
-### 2. 1-Click Developer Tool Store
+### 2. Isolated Application Partitions
+Manage project micro-environments with dedicated virtual environments, Git roots, and 1-click launchers for Cursor Pro, Antigravity IDE, VS Code, and Explorer.
+<p align="center">
+  <img src="./assets/agentos-studio-partitions.png" width="92%" alt="Application Partitions">
+</p>
+
+### 3. Autonomous Agent Skills Hub & skills.sh Live Registry
+Enable verified development capabilities (Refactoring, AST transformations, Security scanning, Playwright E2E) and install community skills from skills.sh with 1 click.
+<p align="center">
+  <img src="./assets/previews/view-skills.png" width="92%" alt="Autonomous Agent Skills">
+</p>
+<p align="center">
+  <img src="./assets/previews/view-skillsh.png" width="92%" alt="skills.sh Live Registry">
+</p>
+
+### 4. Model Context Protocol (MCP) Hub & Project Authorization Matrix
+Configure local and remote MCP tool servers with zero host escape. Granular matrix controls let you toggle `Full Access`, `Read Only`, or `Blocked` per partition.
+<p align="center">
+  <img src="./assets/previews/view-mcp.png" width="92%" alt="Model Context Protocol Hub">
+</p>
+<p align="center">
+  <img src="./assets/previews/view-mcp-matrix.png" width="92%" alt="MCP Project Authorization Matrix">
+</p>
+
+### 5. Runtime Extensions & Background Sidecars
+Equip AI agents with live security masking, automatic pre-execution snapshots, hot-reload preview listeners, and inference telemetry.
+<p align="center">
+  <img src="./assets/previews/view-plugins.png" width="92%" alt="Plugins and Extensions">
+</p>
+
+### 6. Project Brain & Historical Memory
+Secondary persistent brain for every partition. Stores codebase architecture notes, agent conversation transcripts, and system directives so AI agents never lose context across sessions.
+<p align="center">
+  <img src="./assets/previews/view-brain.png" width="92%" alt="Project Brain & Historical Memory">
+</p>
+
+### 7. 1-Click Developer Tool Store
 Install databases, cloud CLIs, and container engines directly into the isolated sandbox without polluting your Windows registry.
 <p align="center">
   <img src="./assets/agentos-studio-tool-store.png" width="92%" alt="Tool Store">
 </p>
 
-### 3. Console Runner & Sandbox Terminal
+### 8. Console Runner & Sandbox Terminal
 Execute commands as a standard user or with passwordless root (`sudo`) with instant preset chips.
 <p align="center">
   <img src="./assets/agentos-studio-console-runner.png" width="92%" alt="Console Runner">

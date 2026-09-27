@@ -1,0 +1,58 @@
+[
+  {
+    "id": "task-1",
+    "title": "Generalize Free Models in Docs & Bridge",
+    "category": "Documentation",
+    "status": "completed",
+    "progress": 100,
+    "desc": "Removed specific model references, added Cursor/Antigravity/Kilo Code."
+  },
+  {
+    "id": "task-2",
+    "title": "Auto-Detect Installed IDEs (Antigravity, Cursor, VS Code)",
+    "category": "Core / Partitions",
+    "status": "completed",
+    "progress": 100,
+    "desc": "Scans PC for Antigravity IDE, agy CLI, VS Code, Cursor; adds dynamic launch buttons."
+  },
+  {
+    "id": "task-3",
+    "title": "Model Context Protocol (MCP) Section & Authorization Matrix",
+    "category": "Integrations",
+    "status": "completed",
+    "progress": 100,
+    "desc": "Manage Filesystem, GitHub, Browser, Database, Memory MCP servers per project with fine-grained authorization."
+  },
+  {
+    "id": "task-4",
+    "title": "Skills Management Section & Per-Project Assignment",
+    "category": "Agent Framework",
+    "status": "completed",
+    "progress": 100,
+    "desc": "Built-in skills (Refactor, Tests, Scraper, Security Auditor) + custom skill builder with interactive project toggles."
+  },
+  {
+    "id": "task-5",
+    "title": "Agent Extensions & Security Plugins",
+    "category": "Runtime Safety",
+    "status": "completed",
+    "progress": 100,
+    "desc": "Secret masker, auto-snapshots on dangerous actions, linter sidecars, telemetry and preview servers."
+  },
+  {
+    "id": "task-6",
+    "title": "Secondary Brain / Project Brain (Memory & History)",
+    "category": "Memory & Telemetry",
+    "status": "completed",
+    "progress": 100,
+    "desc": "Persistent project brain with session chat transcripts, knowledge store, work logs, and persistent memory notes."
+  },
+  {
+    "id": "task-7",
+    "title": "End-to-End System Verification & UI Polish",
+    "category": "Verification",
+    "status": "completed",
+    "progress": 100,
+    "desc": "Validate seamless integration across all views, test local bridge with free models, and refine Apple iOS dark theme."
+  }
+]

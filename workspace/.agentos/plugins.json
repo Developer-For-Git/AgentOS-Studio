@@ -1,0 +1,66 @@
+[
+  {
+    "id": "plugin-secret-masker",
+    "name": "Secret Masker & Sanitizer",
+    "category": "Security",
+    "description": "Detects and redacts API keys (OpenAI, Anthropic, AWS, Stripe), passwords, and tokens from all console logs and agent outputs.",
+    "enabled": true,
+    "icon": "shield"
+  },
+  {
+    "id": "plugin-auto-snapshot",
+    "name": "Auto-Snapshot Safety Trigger",
+    "category": "Safety",
+    "description": "Automatically captures a point-in-time microVM rollback snapshot before an agent executes high-impact shell commands or mass refactors.",
+    "enabled": true,
+    "icon": "camera"
+  },
+  {
+    "id": "plugin-linter-sidecar",
+    "name": "Linter & Formatter Sidecar",
+    "category": "Code Quality",
+    "description": "Runs background linting (Ruff for Python, ESLint & Prettier for Node) each time an agent completes file edits.",
+    "enabled": true,
+    "icon": "check-circle"
+  },
+  {
+    "id": "plugin-token-telemetry",
+    "name": "Token & Inference Telemetry",
+    "category": "Observability",
+    "description": "Monitors input/output tokens, inference latency, and streaming speeds across free models and custom endpoints.",
+    "enabled": true,
+    "icon": "activity"
+  },
+  {
+    "id": "plugin-dev-preview",
+    "name": "Hot-Reload Dev Server Preview",
+    "category": "Developer Experience",
+    "description": "Discovers active local web servers (ports 3000, 5000, 8000) and displays embedded live previews directly in the studio.",
+    "enabled": true,
+    "icon": "globe"
+  },
+  {
+    "id": "plugin-git-checkpoint",
+    "name": "Auto-Git Checkpoint",
+    "category": "Version Safety",
+    "description": "Automatically creates shadow git stashes and clean workspace commits before any autonomous agent run begins.",
+    "enabled": true,
+    "icon": "git-commit"
+  },
+  {
+    "id": "plugin-egress-filter",
+    "name": "Network Egress Firewall",
+    "category": "Security",
+    "description": "Restricts outbound agent HTTP requests strictly to whitelisted package registries and model endpoints.",
+    "enabled": false,
+    "icon": "lock"
+  },
+  {
+    "id": "plugin-resource-limiter",
+    "name": "Memory & CPU Resource Limiter",
+    "category": "Reliability",
+    "description": "Caps memory usage per partition microVM to 4GB and throttles runaway loops to prevent host freeze.",
+    "enabled": true,
+    "icon": "cpu"
+  }
+]

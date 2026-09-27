@@ -21,6 +21,12 @@ node_modules/
 *.key
 *.pem
 *.log
+*token*
+*secret*
+*.credential*
+scripts/test*
+scripts/debug*
+scripts/inspect*
 
 # Python cache & virtualenvs
 __pycache__/

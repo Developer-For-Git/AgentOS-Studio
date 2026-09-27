@@ -48,11 +48,49 @@
                     <span class="nav-pill" id="nav-partition-count">0</span>
                 </button>
 
-                <button class="nav-item" data-page="store">
+                <button class="nav-item" data-page="brain">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="9"></circle>
+                        <path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.5 21l3.39-.47C9.43 20.81 10.68 21 12 21c4.97 0 9-4.03 9-9s-4.03-9-9-9z"></path>
+                        <path d="M9 10a3 3 0 0 1 6 0c0 2-3 3-3 3"></path>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    <span>Project Brain</span>
+                    <span class="nav-pill brain-pill" id="nav-brain-count">Live</span>
+                </button>
+
+                <button class="nav-item" data-page="skills">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                    </svg>
+                    <span>Skills</span>
+                    <span class="nav-pill" id="nav-skills-count">6</span>
+                </button>
+
+                <button class="nav-item" data-page="mcp">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                        <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                        <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                        <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                    </svg>
+                    <span>MCP Tools</span>
+                    <span class="nav-pill" id="nav-mcp-count">6</span>
+                </button>
+
+                <button class="nav-item" data-page="plugins">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                    </svg>
+                    <span>Plugins</span>
+                    <span class="nav-pill" id="nav-plugins-count">5</span>
+                </button>
+
+                <button class="nav-item" data-page="store">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <path d="M16 10a4 4 0 0 1-8 0"></path>
                     </svg>
                     <span>Tool Store</span>
                 </button>
@@ -72,6 +110,7 @@
                     <span>Safety Snapshots</span>
                 </button>
             </nav>
+
 
             <div class="sidebar-footer">
                 <button class="btn-sidebar-action" id="btn-open-workspace">
@@ -245,17 +284,262 @@
                     </div>
 
                     <div class="partitions-grid" id="partitions-container">
-                        <!-- Dynamically populated -->
+                        <!-- Dynamically populated with auto-detected IDE buttons -->
                     </div>
                 </section>
 
-                <!-- PAGE 3: TOOL STORE -->
-                <section class="page" id="page-store">
-                    <div class="page-intro">
-                        <p>Install developer CLI tools and databases directly into the isolated AgentOS container with a single click. Your Windows PC remains completely clean.</p>
+                <!-- PAGE 3: PROJECT BRAIN (SECONDARY BRAIN / MEMORY & HISTORY) -->
+                <section class="page" id="page-brain">
+                    <div class="brain-top-bar">
+                        <div class="brain-project-selector">
+                            <label for="brain-project-select">Partition Brain:</label>
+                            <select id="brain-project-select" class="form-select brain-select">
+                                <!-- Populated dynamically -->
+                            </select>
+                        </div>
+                        <div class="brain-actions">
+                            <button class="btn btn-primary" id="btn-add-memory">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                                <span>Add Memory Note</span>
+                            </button>
+                            <button class="btn btn-secondary" id="btn-refresh-brain">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="23 4 23 10 17 10"></polyline>
+                                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                                </svg>
+                                <span>Sync Brain</span>
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="store-grid">
+                    <!-- Brain Stats Grid -->
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <span class="metric-title">Persistent Memories</span>
+                                <div class="metric-icon-box purple">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="metric-value" id="brain-stat-memories">0</div>
+                            <div class="metric-subtitle">Retained across agent runs</div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <span class="metric-title">Agent Execution Runs</span>
+                                <div class="metric-icon-box blue">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="4 17 10 11 4 5"></polyline>
+                                        <line x1="12" y1="19" x2="20" y2="19"></line>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="metric-value" id="brain-stat-runs">0</div>
+                            <div class="metric-subtitle">Past session transcripts</div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <span class="metric-title">Lines of Code Modified</span>
+                                <div class="metric-icon-box green">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="16 18 22 12 16 6"></polyline>
+                                        <polyline points="8 6 2 12 8 18"></polyline>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="metric-value text-green" id="brain-stat-loc">0</div>
+                            <div class="metric-subtitle">Tracked in partition</div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <span class="metric-title">Tech Runtime</span>
+                                <div class="metric-icon-box amber">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="2" y="3" width="20" height="14" rx="2"></rect>
+                                        <line x1="8" y1="21" x2="16" y2="21"></line>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="metric-value" id="brain-stat-runtime">Detecting...</div>
+                            <div class="metric-subtitle">Verified in sandbox</div>
+                        </div>
+                    </div>
+
+                    <!-- Brain Tabs Navigation -->
+                    <div class="brain-tabs-nav">
+                        <button class="brain-tab active" data-tab="memories">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                            </svg>
+                            <span>Knowledge & Memory Store</span>
+                        </button>
+                        <button class="brain-tab" data-tab="history">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            <span>Agent Run History & Past Chat</span>
+                        </button>
+                        <button class="brain-tab" data-tab="tech">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="16 18 22 12 16 6"></polyline>
+                                <polyline points="8 6 2 12 8 18"></polyline>
+                            </svg>
+                            <span>Tech Stack & System Directives</span>
+                        </button>
+                    </div>
+
+                    <!-- Brain Tab 1: Memories -->
+                    <div class="brain-tab-content active" id="brain-tab-memories">
+                        <div class="memories-grid" id="brain-memories-container">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Brain Tab 2: Agent Runs Timeline -->
+                    <div class="brain-tab-content" id="brain-tab-history">
+                        <div class="agent-runs-timeline" id="brain-runs-container">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Brain Tab 3: Tech Directives -->
+                    <div class="brain-tab-content" id="brain-tab-tech">
+                        <div class="tech-spec-card" id="brain-tech-container">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- PAGE 4: SKILLS MANAGEMENT -->
+                <section class="page" id="page-skills">
+                    <div class="page-actions-bar">
+                        <div class="skills-tab-bar">
+                            <button class="skills-tab active" id="tab-btn-installed" data-tab="installed">
+                                <span>Installed Skills</span>
+                                <span class="skills-tab-count" id="skills-installed-badge">10</span>
+                            </button>
+                            <button class="skills-tab" id="tab-btn-skillsh" data-tab="skillsh">
+                                <span>🌐 skills.sh Registry</span>
+                            </button>
+                        </div>
+                        <div style="display: flex; gap: 12px; align-items: center; margin-left: auto;">
+                            <div class="search-box">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg>
+                                <input type="text" id="skill-search" placeholder="Search skills, categories, or tool capabilities...">
+                            </div>
+                            <button class="btn btn-primary" id="btn-open-create-skill">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                                <span>Create Custom Skill</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="skills-grid" id="skills-container">
+                        <!-- Populated dynamically -->
+                    </div>
+
+                    <div class="skillsh-grid" id="skillsh-container" style="display: none;">
+                        <!-- Populated dynamically from skills.sh registry -->
+                    </div>
+                </section>
+
+                <!-- PAGE 5: MODEL CONTEXT PROTOCOL (MCP) -->
+                <section class="page" id="page-mcp">
+                    <div class="mcp-header-banner">
+                        <div>
+                            <h2>Model Context Protocol (MCP) Server Hub</h2>
+                            <p>Connect autonomous AI agents to local and cloud tool providers with fine-grained per-project authorization.</p>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 12px; margin-left: auto;">
+                            <div class="mcp-stats-pill">
+                                <span class="mcp-indicator-dot"></span>
+                                <span id="mcp-server-count-label">9 Servers Configured</span>
+                            </div>
+                            <button class="btn btn-primary" id="btn-open-create-mcp">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                                <span>+ Add Custom MCP Server</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mcp-servers-grid" id="mcp-servers-container">
+                        <!-- Populated dynamically -->
+                    </div>
+
+                    <div class="glass-card mt-4">
+                        <div class="card-header">
+                            <div>
+                                <h2 class="card-title">Project Authorization Matrix</h2>
+                                <p class="card-desc">Assign granular read/write or blocked permissions per partition for each MCP server.</p>
+                            </div>
+                        </div>
+                        <div class="matrix-wrapper">
+                            <table class="matrix-table" id="mcp-matrix-table">
+                                <!-- Populated dynamically -->
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- PAGE 6: AGENT EXTENSIONS & PLUGINS -->
+                <section class="page" id="page-plugins">
+                    <div class="page-actions-bar">
+                        <div class="page-intro" style="margin-bottom: 0;">
+                            <p>Extend the AgentOS runtime with background sidecars, automatic security checks, and real-time inference telemetry.</p>
+                        </div>
+                        <button class="btn btn-primary" id="btn-open-create-plugin">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            <span>+ Add Custom Plugin</span>
+                        </button>
+                    </div>
+
+                    <div class="plugins-grid" id="plugins-container">
+                        <!-- Populated dynamically -->
+                    </div>
+                </section>
+
+                <!-- PAGE 7: TOOL STORE -->
+                <section class="page" id="page-store">
+                    <div class="page-actions-bar">
+                        <div class="page-intro" style="margin-bottom: 0;">
+                            <p>Install developer CLI tools and databases directly into the isolated AgentOS container with a single click. Your Windows PC remains completely clean.</p>
+                        </div>
+                        <button class="btn btn-primary" id="btn-open-custom-tool">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            <span>+ Install Custom Package / CLI</span>
+                        </button>
+                    </div>
+
+                    <div class="store-grid" id="store-grid-container">
                         <div class="store-card" data-tool="aws">
                             <div class="store-card-header">
                                 <div class="tool-icon aws">AWS</div>
@@ -342,7 +626,7 @@
                     </div>
                 </section>
 
-                <!-- PAGE 4: RUNNER & CONSOLE -->
+                <!-- PAGE 8: RUNNER & CONSOLE -->
                 <section class="page" id="page-runner">
                     <div class="runner-card">
                         <div class="runner-inputs">
@@ -397,7 +681,7 @@
                     </div>
                 </section>
 
-                <!-- PAGE 5: SNAPSHOTS & SAFETY -->
+                <!-- PAGE 9: SNAPSHOTS & SAFETY -->
                 <section class="page" id="page-snapshots">
                     <div class="snapshot-header-card">
                         <div>
@@ -487,7 +771,206 @@
         </div>
     </div>
 
-    <!-- Notification Toast -->
+    <!-- Modal for Create Custom Skill -->
+    <div class="modal-overlay" id="create-skill-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Create Custom Agent Skill</h3>
+                <button class="modal-close-btn" id="btn-close-skill-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Skill Name</label>
+                    <input type="text" id="modal-skill-name" class="form-input" placeholder="e.g. Database Migrator, Performance Profiler">
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <input type="text" id="modal-skill-category" class="form-input" placeholder="e.g. Database, Automation, Code Quality">
+                </div>
+                <div class="form-group">
+                    <label>Capabilities / Description</label>
+                    <textarea id="modal-skill-desc" class="form-textarea" placeholder="Describe the instructions and scope for this agent skill..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>CLI Tools Required (comma separated)</label>
+                    <input type="text" id="modal-skill-tools" class="form-input" placeholder="e.g. pytest, git, playwright, curl">
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="modal-skill-global" checked>
+                        <span class="checkmark"></span>
+                        <span>Enable Globally Across All Partitions</span>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-cancel-skill-modal">Cancel</button>
+                <button class="btn btn-primary" id="btn-confirm-create-skill">
+                    <span>Save Skill</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Add Memory Note -->
+    <div class="modal-overlay" id="add-memory-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Add Persistent Project Memory</h3>
+                <button class="modal-close-btn" id="btn-close-memory-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Memory Title</label>
+                    <input type="text" id="modal-memory-title" class="form-input" placeholder="e.g. Design Pattern, API Key Constraint, Architecture Rule">
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="modal-memory-category" class="form-select">
+                        <option value="Architecture">Architecture</option>
+                        <option value="Design">Design Guideline</option>
+                        <option value="Setup">Setup & Config</option>
+                        <option value="Security">Security Rule</option>
+                        <option value="General">General Note</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Memory Content / Directive</label>
+                    <textarea id="modal-memory-content" class="form-textarea" placeholder="Detail what the AI agent should always remember about this project..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-cancel-memory-modal">Cancel</button>
+                <button class="btn btn-primary" id="btn-confirm-add-memory">
+                    <span>Save Memory</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Create Custom MCP Server -->
+    <div class="modal-overlay" id="create-mcp-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Register Custom MCP Server</h3>
+                <button class="modal-close-btn" id="btn-close-mcp-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>MCP Server Name</label>
+                    <input type="text" id="modal-mcp-name" class="form-input" placeholder="e.g. Postgres DB MCP, Jira Issue Tracker, Puppeteer Hub">
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <input type="text" id="modal-mcp-category" class="form-input" placeholder="e.g. Database, Project Management, Browser Automation">
+                </div>
+                <div class="form-group">
+                    <label>Command / Package / Executable</label>
+                    <input type="text" id="modal-mcp-package" class="form-input" placeholder="e.g. npx -y @modelcontextprotocol/server-postgres">
+                </div>
+                <div class="form-group">
+                    <label>Transport Protocol</label>
+                    <select id="modal-mcp-transport" class="form-select">
+                        <option value="stdio">Standard I/O (stdio) - Local Process</option>
+                        <option value="sse">Server-Sent Events (SSE) - Network Gateway</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Description / Capability Scope</label>
+                    <textarea id="modal-mcp-desc" class="form-textarea" placeholder="Describe the capabilities this MCP server exposes to AI agents..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Exposed MCP Tools (comma-separated)</label>
+                    <input type="text" id="modal-mcp-tools" class="form-input" placeholder="e.g. query_db, list_tables, explain_query, run_migration">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-cancel-mcp-modal">Cancel</button>
+                <button class="btn btn-primary" id="btn-confirm-create-mcp">
+                    <span>Register MCP Server</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Add Custom Plugin -->
+    <div class="modal-overlay" id="create-plugin-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Add Custom Agent Plugin</h3>
+                <button class="modal-close-btn" id="btn-close-plugin-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Plugin Name</label>
+                    <input type="text" id="modal-plugin-name" class="form-input" placeholder="e.g. Auto Commit Guard, Secrets Redactor, Egress Monitor">
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <input type="text" id="modal-plugin-category" class="form-input" placeholder="e.g. Security, Developer Experience, Telemetry">
+                </div>
+                <div class="form-group">
+                    <label>Lifecycle Hook</label>
+                    <select id="modal-plugin-hook" class="form-select">
+                        <option value="Pre-Tool-Execution">Pre-Tool-Execution (Intercept and validate)</option>
+                        <option value="Post-Tool-Execution">Post-Tool-Execution (Sanitize output / sidecar)</option>
+                        <option value="Pre-Commit">Pre-Commit (Verify code standards before saving)</option>
+                        <option value="Heartbeat-Telemetry">Heartbeat-Telemetry (Real-time monitoring daemon)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="modal-plugin-desc" class="form-textarea" placeholder="Detail how this plugin enforces policies or hooks into agent workflows..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-cancel-plugin-modal">Cancel</button>
+                <button class="btn btn-primary" id="btn-confirm-create-plugin">
+                    <span>Save Plugin</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Install Custom Package / Tool -->
+    <div class="modal-overlay" id="install-custom-tool-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Install Custom CLI Tool / Package</h3>
+                <button class="modal-close-btn" id="btn-close-tool-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Package / Tool Name</label>
+                    <input type="text" id="modal-tool-name" class="form-input" placeholder="e.g. ffmpeg, ripgrep, htop, jq, pnpm, ruff">
+                </div>
+                <div class="form-group">
+                    <label>Package Manager</label>
+                    <select id="modal-tool-manager" class="form-select">
+                        <option value="apt">APT (Ubuntu Linux Package Manager)</option>
+                        <option value="npm">NPM (Global Node.js CLI)</option>
+                        <option value="pip">PIP (Python PyPI CLI)</option>
+                        <option value="cargo">Cargo (Rust Crates)</option>
+                        <option value="go">Go (Go Install @latest)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Category Tag</label>
+                    <input type="text" id="modal-tool-category" class="form-input" placeholder="e.g. DevTools, Media, Utilities, Linters">
+                </div>
+                <div class="form-group">
+                    <label>Description (Optional)</label>
+                    <textarea id="modal-tool-desc" class="form-textarea" placeholder="Brief description of what this tool does..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-cancel-tool-modal">Cancel</button>
+                <button class="btn btn-primary" id="btn-confirm-install-tool">
+                    <span>Install Inside AgentOS</span>
+                </button>
+            </div>
+        </div>
+    </div>
     <div class="toast-container" id="toast-container"></div>
 
     <script src="app.js"></script>

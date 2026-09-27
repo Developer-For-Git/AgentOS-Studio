@@ -1,0 +1,165 @@
+[
+  {
+    "id": "mcp-filesystem",
+    "name": "Filesystem MCP",
+    "package": "@modelcontextprotocol/server-filesystem",
+    "category": "Core Storage",
+    "status": "online",
+    "description": "Strictly sandboxed filesystem operations within /workspace. Prevents host drive escape.",
+    "tools": [
+      "read_file",
+      "write_file",
+      "list_directory",
+      "move_file",
+      "get_file_info"
+    ],
+    "projectAccess": {
+      "my-first-app": "read-write",
+      "space-bunny-web": "read-write"
+    }
+  },
+  {
+    "id": "mcp-github",
+    "name": "GitHub MCP",
+    "package": "@modelcontextprotocol/server-github",
+    "category": "Version Control",
+    "status": "online",
+    "description": "Interact with GitHub repositories, pull requests, issues, and code search.",
+    "tools": [
+      "search_repositories",
+      "create_issue",
+      "get_file_contents",
+      "create_pull_request",
+      "push_files"
+    ],
+    "projectAccess": {
+      "my-first-app": "read-only",
+      "space-bunny-web": "read-write"
+    }
+  },
+  {
+    "id": "mcp-browser",
+    "name": "Puppeteer / Browser MCP",
+    "package": "puppeteer-mcp",
+    "category": "Web Automation",
+    "status": "standby",
+    "description": "Headless browser automation inside AgentOS sandbox. Navigates pages and takes screenshots.",
+    "tools": [
+      "navigate_url",
+      "click_element",
+      "fill_input",
+      "take_screenshot",
+      "extract_text"
+    ],
+    "projectAccess": {
+      "my-first-app": "blocked",
+      "space-bunny-web": "read-write"
+    }
+  },
+  {
+    "id": "mcp-database",
+    "name": "SQLite & Postgres MCP",
+    "package": "@modelcontextprotocol/server-sqlite",
+    "category": "Database",
+    "status": "standby",
+    "description": "Executes read/write SQL queries and schema introspection on sandbox databases.",
+    "tools": [
+      "query_db",
+      "list_tables",
+      "describe_table",
+      "execute_migration"
+    ],
+    "projectAccess": {
+      "my-first-app": "read-write",
+      "space-bunny-web": "blocked"
+    }
+  },
+  {
+    "id": "mcp-memory",
+    "name": "Knowledge Graph Memory MCP",
+    "package": "@modelcontextprotocol/server-memory",
+    "category": "Memory & Context",
+    "status": "online",
+    "description": "Graph-based memory server enabling agents to recall project architecture and decisions across sessions.",
+    "tools": [
+      "create_entities",
+      "add_observations",
+      "read_graph",
+      "search_nodes"
+    ],
+    "projectAccess": {
+      "my-first-app": "read-write",
+      "space-bunny-web": "read-write"
+    }
+  },
+  {
+    "id": "mcp-fetch",
+    "name": "Fetch & Doc Reader MCP",
+    "package": "@modelcontextprotocol/server-fetch",
+    "category": "Web Retrieval",
+    "status": "online",
+    "description": "Converts web pages, RFCs, and API documentation into clean markdown for agents.",
+    "tools": [
+      "fetch_markdown",
+      "inspect_headers",
+      "search_documentation"
+    ],
+    "projectAccess": {
+      "my-first-app": "read-only",
+      "space-bunny-web": "read-write"
+    }
+  },
+  {
+    "id": "mcp-brave-search",
+    "name": "Brave Web Search MCP",
+    "package": "@modelcontextprotocol/server-brave-search",
+    "category": "Search & Web",
+    "status": "online",
+    "description": "Gives AI agents fast, privacy-focused web search queries for real-time documentation and debugging.",
+    "tools": [
+      "brave_web_search",
+      "brave_local_search"
+    ],
+    "projectAccess": {
+      "my-first-app": "read-write",
+      "space-bunny-web": "read-write"
+    }
+  },
+  {
+    "id": "mcp-terminal",
+    "name": "Terminal & Shell Execution MCP",
+    "package": "@modelcontextprotocol/server-terminal",
+    "category": "System Execution",
+    "status": "online",
+    "description": "Sandboxed command runner allowing agents to execute bash commands, run test runners, and inspect processes.",
+    "tools": [
+      "execute_bash",
+      "check_process",
+      "kill_process",
+      "get_env"
+    ],
+    "projectAccess": {
+      "my-first-app": "read-write",
+      "space-bunny-web": "read-write"
+    }
+  },
+  {
+    "id": "mcp-git",
+    "name": "Git Tools MCP",
+    "package": "@modelcontextprotocol/server-git",
+    "category": "Version Control",
+    "status": "online",
+    "description": "Direct Git operations including diff inspection, branching, commit history, and staging.",
+    "tools": [
+      "git_status",
+      "git_diff",
+      "git_commit",
+      "git_checkout",
+      "git_log"
+    ],
+    "projectAccess": {
+      "my-first-app": "read-write",
+      "space-bunny-web": "read-write"
+    }
+  }
+]

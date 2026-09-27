@@ -1,0 +1,154 @@
+[
+  {
+    "id": "code-refactor",
+    "name": "Code Modernizer & Refactor",
+    "category": "Refactoring",
+    "description": "Refactors legacy patterns, eliminates technical debt, migrates promises to async/await, and enforces clean modular code.",
+    "tools": [
+      "ast-grep",
+      "prettier",
+      "git-diff"
+    ],
+    "enabledGlobally": true,
+    "assignedProjects": [
+      "my-first-app",
+      "space-bunny-web"
+    ]
+  },
+  {
+    "id": "test-architect",
+    "name": "Automated Test Suite Architect",
+    "category": "Testing",
+    "description": "Analyzes codebase logic and automatically authors comprehensive unit, integration, and edge-case test suites (PyTest, Vitest, Jest).",
+    "tools": [
+      "pytest",
+      "jest",
+      "coverage-cli"
+    ],
+    "enabledGlobally": true,
+    "assignedProjects": [
+      "space-bunny-web"
+    ]
+  },
+  {
+    "id": "web-scraper",
+    "name": "Web Scraper & DOM Navigator",
+    "category": "Automation",
+    "description": "Automates headless Chromium browsing via Playwright, extracts structured markdown, downloads docs, and bypasses bot walls.",
+    "tools": [
+      "playwright",
+      "puppeteer",
+      "cheerio"
+    ],
+    "enabledGlobally": false,
+    "assignedProjects": [
+      "space-bunny-web"
+    ]
+  },
+  {
+    "id": "security-auditor",
+    "name": "Security & Secret Vulnerability Auditor",
+    "category": "Security",
+    "description": "Deep-scans partitions for leaked secrets, OWASP vulnerabilities, SQL injection risks, and outdated CVE-impacted dependencies.",
+    "tools": [
+      "semgrep",
+      "trufflehog",
+      "npm-audit",
+      "pip-audit"
+    ],
+    "enabledGlobally": true,
+    "assignedProjects": [
+      "my-first-app",
+      "space-bunny-web"
+    ]
+  },
+  {
+    "id": "git-workflow",
+    "name": "Git Flow & Auto-Committer",
+    "category": "Version Control",
+    "description": "Inspects uncommitted diffs, generates semantic Conventional Commits, drafts GitHub pull requests, and resolves merge conflicts.",
+    "tools": [
+      "git",
+      "gh-cli"
+    ],
+    "enabledGlobally": true,
+    "assignedProjects": [
+      "space-bunny-web"
+    ]
+  },
+  {
+    "id": "api-builder",
+    "name": "OpenAPI & REST Schema Builder",
+    "category": "Architecture",
+    "description": "Auto-generates OpenAPI 3.1 specifications, TypeScript client SDKs, and mock server handlers directly from backend route definitions.",
+    "tools": [
+      "swagger-cli",
+      "prism",
+      "ts-morph"
+    ],
+    "enabledGlobally": false,
+    "assignedProjects": [
+      "my-first-app"
+    ]
+  },
+  {
+    "id": "doc-synthesizer",
+    "name": "Documentation & Markdown Synthesizer",
+    "category": "Documentation",
+    "description": "Synthesizes comprehensive markdown documentation, architecture diagrams, and API references directly from codebase AST.",
+    "tools": [
+      "typedoc",
+      "jsdoc",
+      "markdown-it"
+    ],
+    "enabledGlobally": true,
+    "assignedProjects": [
+      "space-bunny-web"
+    ]
+  },
+  {
+    "id": "database-migrator",
+    "name": "SQL Schema & Migration Planner",
+    "category": "Database",
+    "description": "Designs relational schemas, generates safe schema migrations (Prisma, Alembic, Drizzle), and optimizes slow SQL queries.",
+    "tools": [
+      "prisma",
+      "alembic",
+      "sqllint"
+    ],
+    "enabledGlobally": false,
+    "assignedProjects": [
+      "my-first-app"
+    ]
+  },
+  {
+    "id": "docker-containerizer",
+    "name": "Production Docker & Compose Generator",
+    "category": "DevOps",
+    "description": "Generates multi-stage optimized Dockerfiles, docker-compose configurations, and health checks tailored to project runtime.",
+    "tools": [
+      "docker",
+      "hadolint"
+    ],
+    "enabledGlobally": true,
+    "assignedProjects": [
+      "my-first-app",
+      "space-bunny-web"
+    ]
+  },
+  {
+    "id": "performance-profiler",
+    "name": "Runtime Performance & Memory Profiler",
+    "category": "Optimization",
+    "description": "Identifies memory leaks, unoptimized loops, blocking I/O calls, and bundle bloat across Python and JavaScript codebases.",
+    "tools": [
+      "clinicjs",
+      "py-spy",
+      "webpack-bundle-analyzer"
+    ],
+    "enabledGlobally": false,
+    "assignedProjects": [
+      "space-bunny-web"
+    ]
+  }
+]

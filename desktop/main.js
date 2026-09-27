@@ -2,6 +2,7 @@ const { app, BrowserWindow, ipcMain, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const { exec, spawn } = require('child_process');
+const store = require('./agentos-store');
 
 let mainWindow;
 
@@ -18,10 +19,10 @@ function ensureDirectories() {
 
 function createWindow() {
     mainWindow = new BrowserWindow({
-        width: 1180,
-        height: 800,
-        minWidth: 1000,
-        minHeight: 650,
+        width: 1220,
+        height: 840,
+        minWidth: 1040,
+        minHeight: 700,
         backgroundColor: '#0c0e14',
         title: 'AgentOS Studio',
         webPreferences: {
@@ -37,6 +38,10 @@ function createWindow() {
 
     mainWindow.once('ready-to-show', () => {
         mainWindow.show();
+    });
+
+    mainWindow.webContents.on('did-finish-load', () => {
+        // Window loaded and ready
     });
 }
 
@@ -67,7 +72,123 @@ function runCmd(cmd) {
     });
 }
 
-// IPC Handlers
+// Editor Detection Engine
+function getInstalledEditors() {
+    const localAppData = process.env.LOCALAPPDATA || '';
+    const programFiles = process.env.ProgramFiles || '';
+    const candidates = [
+        {
+            id: 'antigravity-ide',
+            name: 'Antigravity IDE',
+            badge: 'DeepMind',
+            icon: 'rocket',
+            paths: [
+                path.join(localAppData, 'Programs', 'Antigravity IDE', 'Antigravity IDE.exe'),
+                path.join(localAppData, 'Programs', 'antigravity', 'Antigravity.exe')
+            ]
+        },
+        {
+            id: 'antigravity-cli',
+            name: 'Antigravity CLI (agy)',
+            badge: 'CLI Agent',
+            icon: 'terminal',
+            paths: [
+                path.join(localAppData, 'agy', 'bin', 'agy.exe')
+            ]
+        },
+        {
+            id: 'vscode',
+            name: 'VS Code',
+            badge: 'IDE',
+            icon: 'code',
+            paths: [
+                path.join(localAppData, 'Programs', 'Microsoft VS Code', 'bin', 'code.cmd'),
+                path.join(localAppData, 'Programs', 'Microsoft VS Code', 'Code.exe'),
+                path.join(programFiles, 'Microsoft VS Code', 'bin', 'code.cmd')
+            ]
+        },
+        {
+            id: 'cursor',
+            name: 'Cursor Pro',
+            badge: 'AI IDE',
+            icon: 'cursor',
+            paths: [
+                path.join(localAppData, 'Programs', 'cursor', 'Cursor.exe'),
+                path.join(localAppData, 'cursor', 'Cursor.exe')
+            ]
+        },
+        {
+            id: 'kilocode',
+            name: 'Kilo Code',
+            badge: 'AI IDE',
+            icon: 'cpu',
+            paths: [
+                path.join(localAppData, 'Programs', 'kilocode', 'kilocode.exe'),
+                path.join(localAppData, 'kilocode', 'kilocode.exe')
+            ]
+        },
+        {
+            id: 'windsurf',
+            name: 'Windsurf',
+            badge: 'AI IDE',
+            icon: 'wind',
+            paths: [
+                path.join(localAppData, 'Programs', 'Windsurf', 'Windsurf.exe')
+            ]
+        }
+    ];
+
+    const installed = [];
+    for (const cand of candidates) {
+        let foundPath = null;
+        for (const p of cand.paths) {
+            if (fs.existsSync(p)) {
+                foundPath = p;
+                break;
+            }
+        }
+        if (foundPath) {
+            installed.push({
+                id: cand.id,
+                name: cand.name,
+                badge: cand.badge,
+                icon: cand.icon,
+                path: foundPath
+            });
+        }
+    }
+    return installed;
+}
+
+function openEditor(editorId, targetPath) {
+    const editors = getInstalledEditors();
+    const ed = editors.find(e => e.id === editorId);
+    const p = targetPath || workspaceDir;
+
+    if (!ed) {
+        shell.openPath(p);
+        return true;
+    }
+
+    if (ed.id === 'antigravity-cli') {
+        exec(`start cmd.exe /k "cd /d \"${p}\" && agy"`);
+        return true;
+    }
+
+    if (ed.path.endsWith('.cmd') || ed.path.endsWith('.bat')) {
+        exec(`"${ed.path}" "${p}"`);
+        return true;
+    }
+
+    try {
+        spawn(ed.path, [p], { detached: true, stdio: 'ignore' }).unref();
+    } catch (e) {
+        exec(`"${ed.path}" "${p}"`);
+    }
+    return true;
+}
+
+// IPC Handlers - System & Core
 ipcMain.handle('get-system-status', async () => {
     const res = await runCmd('wsl.exe -d AgentOS agentos info');
     let memory = '11 GB';
@@ -146,6 +267,9 @@ ipcMain.handle('create-partition', async (event, { name, template }) => {
         await runCmd(`wsl.exe -d AgentOS --cd /workspace/projects/${safeName} npm init -y`);
     }
 
+    // Initialize Project Brain
+    store.getProjectBrain(safeName);
+
     return { success: res.success, output: res.stdout || res.stderr };
 });
 
@@ -162,11 +286,7 @@ ipcMain.handle('open-explorer', (event, targetPath) => {
 });
 
 ipcMain.handle('open-code', (event, targetPath) => {
-    const p = targetPath || workspaceDir;
-    exec(`code "${p}"`, (err) => {
-        if (err) shell.openPath(p);
-    });
-    return true;
+    return openEditor('vscode', targetPath);
 });
 
 ipcMain.handle('open-terminal', () => {
@@ -174,6 +294,16 @@ ipcMain.handle('open-terminal', () => {
     return true;
 });
 
+// Dynamic Editor IPC
+ipcMain.handle('get-installed-editors', () => {
+    return getInstalledEditors();
+});
+
+ipcMain.handle('open-editor', (event, { editorId, targetPath }) => {
+    return openEditor(editorId, targetPath);
+});
+
+// Command Runner
 ipcMain.handle('run-command', async (event, { command, workingDir, asRoot }) => {
     const dir = workingDir || '/workspace';
     const sudoFlag = asRoot ? '-u root ' : '';
@@ -186,6 +316,7 @@ ipcMain.handle('run-command', async (event, { command, workingDir, asRoot }) => 
     };
 });
 
+// Tool Store
 ipcMain.handle('install-tool', async (event, toolKey) => {
     let installCmd = '';
     switch (toolKey) {
@@ -215,6 +346,7 @@ ipcMain.handle('install-tool', async (event, toolKey) => {
     return { success: res.success, output: res.stdout || res.stderr };
 });
 
+// Snapshots
 ipcMain.handle('get-snapshots', async () => {
     ensureDirectories();
     const files = fs.readdirSync(backupsDir);
@@ -257,4 +389,125 @@ ipcMain.handle('restart-os', async () => {
     await runCmd('wsl.exe -t AgentOS');
     await runCmd('wsl.exe -d AgentOS true');
     return { success: true };
+});
+
+// --- Todos / Live Task Tracker IPC ---
+ipcMain.handle('get-todos', () => {
+    return store.getTodos();
+});
+
+ipcMain.handle('update-todo', (event, { id, updates }) => {
+    return store.updateTodo(id, updates);
+});
+
+// --- Skills IPC ---
+ipcMain.handle('get-skills', () => {
+    return store.getSkills();
+});
+
+ipcMain.handle('toggle-skill', (event, { id, field, value }) => {
+    return store.toggleSkill(id, field, value);
+});
+
+ipcMain.handle('toggle-skill-for-project', (event, { skillId, projectName }) => {
+    return store.toggleSkillForProject(skillId, projectName);
+});
+
+ipcMain.handle('create-skill', (event, skillData) => {
+    return store.createSkill(skillData);
+});
+
+ipcMain.handle('get-skills-sh-registry', () => {
+    return store.getSkillsShRegistry();
+});
+
+ipcMain.handle('install-skill-from-registry', (event, skillId) => {
+    return store.installSkillFromRegistry(skillId);
+});
+
+// --- MCP IPC ---
+ipcMain.handle('get-mcp-servers', () => {
+    return store.getMcpServers();
+});
+
+ipcMain.handle('update-mcp-project-access', (event, { serverId, projectName, accessLevel }) => {
+    return store.updateMcpProjectAccess(serverId, projectName, accessLevel);
+});
+
+ipcMain.handle('toggle-mcp-server-status', (event, { serverId, status }) => {
+    return store.toggleMcpServerStatus(serverId, status);
+});
+
+ipcMain.handle('create-mcp-server', (event, mcpData) => {
+    return store.createMcpServer(mcpData);
+});
+
+// --- Plugins IPC ---
+ipcMain.handle('get-plugins', () => {
+    return store.getPlugins();
+});
+
+ipcMain.handle('toggle-plugin', (event, pluginId) => {
+    return store.togglePlugin(pluginId);
+});
+
+ipcMain.handle('create-plugin', (event, pluginData) => {
+    return store.createPlugin(pluginData);
+});
+
+// --- Custom Package Installation IPC ---
+ipcMain.handle('install-custom-tool', async (event, { manager, packageName }) => {
+    const cleanPkg = (packageName || '').replace(/[^a-zA-Z0-9_\-@\.\/]/g, '');
+    if (!cleanPkg) return { success: false, error: 'Invalid package name' };
+
+    let cmd = '';
+    switch (manager) {
+        case 'apt':
+            cmd = `sudo apt-get update && sudo apt-get install -y ${cleanPkg}`;
+            break;
+        case 'npm':
+            cmd = `sudo npm install -g ${cleanPkg}`;
+            break;
+        case 'pip':
+            cmd = `pip3 install --break-system-packages ${cleanPkg}`;
+            break;
+        case 'cargo':
+            cmd = `cargo install ${cleanPkg}`;
+            break;
+        case 'go':
+            cmd = `go install ${cleanPkg}@latest`;
+            break;
+        default:
+            cmd = `sudo apt-get install -y ${cleanPkg}`;
+    }
+
+    const res = await runCmd(`wsl.exe -d AgentOS bash -lc "${cmd}"`);
+    return { success: res.success, output: res.stdout || res.stderr, packageName: cleanPkg };
+});
+
+// --- Project Brain IPC ---
+ipcMain.handle('get-project-brain', (event, projectName) => {
+    return store.getProjectBrain(projectName);
+});
+
+ipcMain.handle('add-brain-memory', (event, { projectName, memory }) => {
+    return store.addBrainMemory(projectName, memory);
+});
+
+ipcMain.handle('delete-brain-memory', (event, { projectName, memoryId }) => {
+    return store.deleteBrainMemory(projectName, memoryId);
+});
+
+// --- Screenshot Capture IPC ---
+ipcMain.handle('capture-screen', async (event, filename) => {
+    try {
+        if (!mainWindow) return { success: false, error: 'No window' };
+        const image = await mainWindow.webContents.capturePage();
+        const fname = filename || 'screenshot_latest.png';
+        const targetPath = path.join('C:\\Users\\LOL\\.gemini\\antigravity\\brain\\82f95657-8a7c-405b-bed9-9a39070e539b', fname);
+        fs.writeFileSync(targetPath, image.toPNG());
+        return { success: true, path: targetPath };
+    } catch (e) {
+        return { success: false, error: e.message };
+    }
 });
