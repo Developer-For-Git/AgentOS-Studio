@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./assets/icon.png" width="128" height="128" alt="AgentOS Studio Logo" style="border-radius: 24px;">
+</p>
+
 # AgentOS Studio 🤖🛡️
 
 > **The Sandboxed Sub-Operating System & Apple-Polished Desktop Studio for Autonomous AI Coding Agents**
