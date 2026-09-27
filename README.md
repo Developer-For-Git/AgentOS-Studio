@@ -7,12 +7,20 @@
 </p>
 
 <p align="center">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-orange.svg?style=flat-square" alt="License: MIT"></a>
+  <a href="#-project-status--active-beta"><img src="https://img.shields.io/badge/Status-Active%20Beta%20%7C%20WIP-yellow?style=flat-square" alt="Status: Active Beta"></a>
+  <a href="#-license--open-source-philosophy"><img src="https://img.shields.io/badge/License-MIT-orange.svg?style=flat-square" alt="License: MIT"></a>
   <a href="https://microsoft.com/windows"><img src="https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011-blue?style=flat-square&logo=windows" alt="Platform"></a>
   <a href="https://electronjs.org"><img src="https://img.shields.io/badge/Stack-Electron%20v44%20%7C%20Ubuntu%2024.04%20LTS%20%7C%20WSL2-30d158?style=flat-square" alt="Tech Stack"></a>
   <a href="#-refined-apple-ios--macos-design"><img src="https://img.shields.io/badge/Design-Apple%20iOS%20Dark%20Theme-ff9500?style=flat-square" alt="Theme"></a>
   <a href="#-the-zero-trust-security-firewall"><img src="https://img.shields.io/badge/Security-100%25%20Host%20Drive%20Isolated-10b981?style=flat-square" alt="Security"></a>
 </p>
+
+> [!IMPORTANT]
+> ### 🚧 Project Status: Active Beta & Community Feedback Driven
+> **AgentOS Studio is in active, rapid development and is not yet a frozen 1.0 release.**
+> We are actively configuring subsystems, testing tool chains, adding new integrations (MCP servers, skills, graph tools), hardening isolation boundaries, and fixing bugs.
+>
+> 💡 **Community Feedback Accelerates Development:** The more developers use AgentOS, run autonomous coding agents in it, and share their real-world workflows, the faster we can fix edge cases, polish features, and expand the platform. If you encounter any bugs, have feature requests, or want support for specific AI agents and CLI tools, please **[open an Issue](https://github.com/Developer-For-Git/AgentOS-Studio/issues)** or submit a Pull Request!
 
 ---
 
@@ -338,15 +346,25 @@ AgentOS includes an internal daemon (`scripts/opencode-bridge.js`) running on `h
 
 ## 🤝 Contributing
 
-Contributions are warmly welcomed! Please see our contribution guidelines:
-1. Fork the Project.
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`).
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`).
-4. Push to the Branch (`git push origin feature/AmazingFeature`).
-5. Open a Pull Request.
+## 🤝 Contributing & Community Roadmap
+AgentOS Studio thrives on open-source community collaboration! Because the project is in **Active Beta**, we actively review and merge community improvements:
+1. **Report Bugs & Edge Cases:** If an agent, partition, or tool behaves unexpectedly, [open an issue](https://github.com/Developer-For-Git/AgentOS-Studio/issues) with reproduction steps.
+2. **Suggest Tools & Model Providers:** Request custom MCP servers, new skills, or local LLM engine hooks.
+3. **Submit Code Changes:**
+   * Fork the repository.
+   * Create your Feature Branch (`git checkout -b feature/NewCapability`).
+   * Commit your Changes (`git commit -m 'feat: add NewCapability'`).
+   * Push to the Branch (`git push origin feature/NewCapability`).
+   * Open a Pull Request.
 
 ---
 
-## 📄 License
+## 📄 License & Open-Source Philosophy
 
-Distributed under the **MIT License**. See [LICENSE](LICENSE) for more information.
+AgentOS Studio is published as free and open-source software under the **[MIT License](LICENSE)**.
+
+### ❓ Why the MIT License?
+* **100% Free & Unrestricted:** Anyone—individual developers, students, startups, and enterprises—can use, study, and run AgentOS Studio completely free of charge with zero royalties or vendor lock-in.
+* **Maximum Developer Freedom:** You have full permission to fork the codebase, modify configurations, add internal security rules, build proprietary plugins, or distribute custom sub-OS distributions.
+* **Open & Auditable Security:** A sandboxing operating system for autonomous AI agents must be completely transparent. With the MIT License, every script, firewall rule, and IPC handler is publicly inspectable and auditable.
+* **Standard Liability & Warranty Disclaimer:** As an actively developing project, the MIT License includes standard open-source protections that allow rapid prototyping and experimentation without legal friction.
