@@ -17,7 +17,15 @@ function ensureDirectories() {
     if (!fs.existsSync(backupsDir)) fs.mkdirSync(backupsDir, { recursive: true });
 }
 
+if (process.platform === 'win32') {
+    app.setAppUserModelId('com.agentos.studio');
+}
+
 function createWindow() {
+    const iconPath = fs.existsSync(path.join(__dirname, 'icon.ico')) 
+        ? path.join(__dirname, 'icon.ico') 
+        : path.join(__dirname, '..', 'assets', 'icon.ico');
+
     mainWindow = new BrowserWindow({
         width: 1220,
         height: 840,
@@ -25,6 +33,7 @@ function createWindow() {
         minHeight: 700,
         backgroundColor: '#0c0e14',
         title: 'AgentOS Studio',
+        icon: iconPath,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             contextIsolation: true,

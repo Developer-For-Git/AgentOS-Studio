@@ -124,6 +124,10 @@ $shortcutPath = "$userDesktop\AgentOS.lnk"
 $electronExe = "$desktopDir\node_modules\electron\dist\electron.exe"
 $launcherBat = "$baseDir\launch-agentos-studio.bat"
 $launcherVbs = "$baseDir\launch-agentos-studio.vbs"
+$iconPath = "$baseDir\assets\icon.ico"
+if (-not (Test-Path $iconPath)) {
+    $iconPath = "$desktopDir\icon.ico"
+}
 
 $WshShell = New-Object -ComObject WScript.Shell
 $Shortcut = $WshShell.CreateShortcut($shortcutPath)
@@ -141,10 +145,14 @@ if (Test-Path $electronExe) {
     $Shortcut.Arguments = "/c cd /d ""$desktopDir"" && npm start"
 }
 
+if (Test-Path $iconPath) {
+    $Shortcut.IconLocation = "$iconPath,0"
+}
+
 $Shortcut.WorkingDirectory = $desktopDir
 $Shortcut.Description = "AgentOS Studio - Sandboxed AI Agent Environment"
 $Shortcut.Save()
-Write-Host "Created Desktop shortcut: $shortcutPath" -ForegroundColor Green
+Write-Host "Created Desktop shortcut with custom icon: $shortcutPath" -ForegroundColor Green
 
 Write-Host ""
 Write-Host "=======================================================" -ForegroundColor Green
