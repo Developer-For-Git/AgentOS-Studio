@@ -27,9 +27,8 @@ const server = http.createServer((req, res) => {
         res.end(JSON.stringify({
             object: "list",
             data: [
-                { id: "space-bunny-free", object: "model", owned_by: "opencode" },
-                { id: "claude-3-7-sonnet-20250219", object: "model", owned_by: "anthropic" },
-                { id: "claude-3-5-sonnet-20241022", object: "model", owned_by: "anthropic" },
+                { id: process.env.MODEL_NAME || "free-model", object: "model", owned_by: "provider" },
+                { id: "claude-3-7-sonnet", object: "model", owned_by: "anthropic" },
                 { id: "claude-3-5-sonnet", object: "model", owned_by: "anthropic" },
                 { id: "gpt-4o", object: "model", owned_by: "openai" }
             ]
@@ -37,7 +36,7 @@ const server = http.createServer((req, res) => {
         return;
     }
 
-    // Anthropic Messages endpoint (for Claude Code, Claude SDK)
+    // Anthropic Messages endpoint (for Claude Code, Antigravity CLI, Claude SDK)
     if (req.url.includes('/messages')) {
         let bodyChunks = [];
         req.on('data', chunk => bodyChunks.push(chunk));
@@ -45,8 +44,10 @@ const server = http.createServer((req, res) => {
             let bodyStr = Buffer.concat(bodyChunks).toString();
             try {
                 let parsed = JSON.parse(bodyStr);
-                // Map any requested Claude model to space-bunny-free
-                parsed.model = "space-bunny-free";
+                // Map to configured model if specified
+                if (process.env.MODEL_NAME) {
+                    parsed.model = process.env.MODEL_NAME;
+                }
                 bodyStr = JSON.stringify(parsed);
             } catch (e) {}
 
@@ -92,7 +93,9 @@ const server = http.createServer((req, res) => {
             let bodyStr = Buffer.concat(bodyChunks).toString();
             try {
                 let parsed = JSON.parse(bodyStr);
-                parsed.model = "space-bunny-free";
+                if (process.env.MODEL_NAME) {
+                    parsed.model = process.env.MODEL_NAME;
+                }
                 bodyStr = JSON.stringify(parsed);
             } catch (e) {}
 

@@ -40,7 +40,7 @@ Execute commands as a standard user or with passwordless root (`sudo`) with inst
 
 ## 🌟 What is AgentOS Studio?
 
-**AgentOS Studio** gives autonomous AI coding agents (such as **Claude Code**, **Aider**, **OpenCode**, and custom agent frameworks) a dedicated, sandboxed **Sub-Operating System** (Ubuntu 24.04 LTS running via a hardware-isolated Hyper-V WSL2 microVM) paired with a desktop studio interface designed to Apple's Human Interface Guidelines.
+**AgentOS Studio** gives autonomous AI coding agents (such as **Antigravity CLI (`agy`)**, **Claude Code**, **Aider**, **Kilo Code CLI**, **OpenCode**) and modern AI code editors (such as **Cursor**, **Cursor Pro**, **Google Antigravity IDE**, **Kilo Code**, **VS Code**) a dedicated, sandboxed **Sub-Operating System** (Ubuntu 24.04 LTS running via a hardware-isolated Hyper-V WSL2 microVM) paired with a desktop studio interface designed to Apple's Human Interface Guidelines.
 
 ### Why does it exist?
 Giving autonomous AI agents raw terminal access to your primary operating system is hazardous:
@@ -63,7 +63,7 @@ flowchart TD
         direction TB
         User["👤 Developer"] --> Studio["🍎 AgentOS Studio (Desktop UI)"]
         Studio --> Desktop["💻 Windows Desktop"]
-        VSCode["📝 Host VS Code / Cursor"]
+        IDEs["📝 Cursor Pro / Antigravity IDE / Kilo Code / VS Code"]
     end
 
     subgraph Barrier ["🛡️ Zero-Trust Security Boundary"]
@@ -76,7 +76,7 @@ flowchart TD
         direction TB
         Kernel["⚙️ WSL2 Hyper-V Linux MicroVM"]
         Kernel --> Bridge["⚡ Multi-Protocol Model Bridge (:8000)"]
-        Bridge --> AgentBox["🤖 Autonomous Agents (Claude Code / Aider / OpenCode)"]
+        Bridge --> AgentBox["🤖 Autonomous Agents (Antigravity CLI / Claude / Aider / OpenCode)"]
         AgentBox --> Store["📦 1-Click Tool Store (Postgres / Redis / AWS / Supabase)"]
         AgentBox --> Snapshots["📸 Instant Snapshots & Rollback"]
     end
@@ -87,9 +87,9 @@ flowchart TD
     end
 
     Studio ==> Barrier ==> SubOS
-    VSCode <==>|Direct File Edit| WorkPartition
+    IDEs <==>|Direct File Edit| WorkPartition
     AgentBox -->|Execute & Code| WorkPartition
-    Bridge -->|Free Models| Cloud["☁️ Free Reasoning Models (space-bunny-free)"]
+    Bridge -->|Free Models| Cloud["☁️ Free Reasoning Models & AI Providers"]
 ```
 
 ---
@@ -103,19 +103,19 @@ sequenceDiagram
     participant Studio as 🍎 AgentOS Studio
     participant SubOS as 🐧 AgentOS (Ubuntu 24.04)
     participant Bridge as ⚡ Internal Bridge (:8000)
-    participant Agent as 🤖 Claude Code / Aider
+    participant Agent as 🤖 Antigravity CLI / Cursor / Claude / Aider
     participant Host as 💻 Windows C:\ Drive
 
     Dev->>Studio: Click "Create Partition"
     Studio->>SubOS: Provision isolated directory in /workspace
-    Dev->>Agent: Launch agent inside partition
+    Dev->>Agent: Launch agent inside partition or connect IDE
     Agent->>Bridge: Send inference request (Anthropic / OpenAI format)
-    Bridge-->>Agent: Stream reasoning tokens (space-bunny-free)
+    Bridge-->>Agent: Stream reasoning tokens (Free Model Provider)
     Agent->>SubOS: Run root commands (apt, npm, python, pipx, test)
     Agent--xHost: Attempt to read C:\ or personal files (BLOCKED: unmounted)
     Agent->>SubOS: Save project code in /workspace
     SubOS-->>Studio: Real-time telemetry (CPU, RAM, Partitions)
-    Studio-->>Dev: Ready to inspect in Windows Explorer / VS Code
+    Studio-->>Dev: Ready to inspect in Cursor, Antigravity IDE, or Explorer
 ```
 
 ---
@@ -130,21 +130,36 @@ AgentOS Studio was specifically styled to avoid generic "AI slop" (no cheap neon
 
 ---
 
+## 💻 Supported AI-Native IDEs & Editors
+
+AgentOS Studio is engineered to work seamlessly with the world's leading AI-first IDEs and code editors. Developers can write code on Windows in their favorite editor while all background agents, terminal actions, and builds run safely inside the isolated sub-OS:
+
+| Editor / IDE | Compatibility | Integration Mode | Features |
+| :--- | :--- | :--- | :--- |
+| **Cursor & Cursor Pro** | ✅ **Native** | Direct `/workspace` mount + Bridge | Full agentic Composer, terminal execution isolated in AgentOS, zero access to Windows host files |
+| **Google Antigravity IDE** | ✅ **Native** | Direct `/workspace` mount + Multi-Agent | Autonomous agent pairing, multi-agent planning, background execution in sub-OS microVM |
+| **Kilo Code** | ✅ **Native** | Workspace mount + API Bridge | Local and remote agent workflows, zero-trust filesystem isolation |
+| **VS Code** | ✅ **Native** | Dev Containers / Remote-WSL / Direct Mount | Compatible with GitHub Copilot, Cline, Roo Code, and Continue extensions |
+
+---
+
 ## 🤖 Supported & Verified CLI Agents
 
-AgentOS Studio comes pre-configured with popular AI coding agents, verified to run inside the sandbox using free or custom models:
+AgentOS Studio comes pre-configured with popular autonomous AI coding agents, verified to run inside the sandbox using **any free model provider**, local models, or custom AI endpoints:
 
 | CLI Agent | Version | Protocol | Status | Capabilities |
 | :--- | :--- | :--- | :--- | :--- |
-| **Claude Code** (`claude`) | `2.1.283` | Anthropic Messages SSE | ✅ **Verified** | Reads codebase, generates ASCII diagrams, edits Markdown & JSON, creates files |
-| **Aider** (`aider`) | `0.86.2` | OpenAI Chat Completions | ✅ **Verified** | Applies unified diffs, writes Python code, multi-turn reasoning |
+| **Antigravity CLI** (`agy`) | `Latest` | Multi-Agent / SSE | ✅ **Verified** | Google DeepMind agentic CLI for multi-agent coordination, automated project refactors, and terminal tasks |
+| **Claude Code** (`claude`) | `2.1.283` | Anthropic Messages SSE | ✅ **Verified** | Reads codebase, generates ASCII architecture, edits Markdown & JSON, creates files |
+| **Aider** (`aider`) | `0.86.2` | OpenAI Chat Completions | ✅ **Verified** | Applies unified diffs, writes Python/Node code, multi-turn reasoning loops |
+| **Kilo Code CLI** (`kilocode`) | `Latest` | OpenAI / Anthropic API | ✅ **Verified** | Headless CLI agent runner for unattended tasks |
 | **OpenCode CLI** (`opencode`) | `1.18.32` | Native OpenCode Protocol | ✅ **Verified** | Interactive terminal TUI and CLI execution |
 
-### Built-in Multi-Protocol Model Bridge
-AgentOS includes an internal daemon (`opencode-bridge.js`) running on `http://127.0.0.1:8000`:
+### ⚡ Built-in Multi-Protocol Model Bridge
+AgentOS includes an internal daemon (`scripts/opencode-bridge.js`) running on `http://127.0.0.1:8000`:
 * Accepts standard **OpenAI `/v1/chat/completions`** requests.
 * Accepts native **Anthropic `/v1/messages`** streaming requests with thinking tokens.
-* Routes requests through OpenCode's infrastructure to free models like `space-bunny-free`.
+* **Universal Model Compatibility:** Routes requests to unlimited free models from your preferred model provider, local LLMs (Ollama / vLLM), or custom OpenAI-compatible endpoints with zero configuration required.
 
 ---
 
@@ -188,7 +203,7 @@ irm https://raw.githubusercontent.com/Developer-For-Git/AgentOS-Studio/main/inst
 2. Copy the environment template:
    ```bash
    cp .env.example .env
-   # Add your OpenCode API key if using the free model bridge
+   # Configure your free model provider or custom API keys in .env
    ```
 3. Launch the desktop studio:
    ```bash
