@@ -288,7 +288,7 @@
                     </div>
                 </section>
 
-                <!-- PAGE 3: PROJECT BRAIN (SECONDARY BRAIN / MEMORY & HISTORY) -->
+                <!-- PAGE 3: PROJECT BRAIN (SECONDARY BRAIN / OBSIDIAN KNOWLEDGE GRAPH & MEMORY) -->
                 <section class="page" id="page-brain">
                     <div class="brain-top-bar">
                         <div class="brain-project-selector">
@@ -298,6 +298,20 @@
                             </select>
                         </div>
                         <div class="brain-actions">
+                            <button class="btn btn-secondary" id="btn-open-export-obsidian" title="Export markdown vault with wikilinks for Obsidian">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                </svg>
+                                <span>Export Obsidian Vault</span>
+                            </button>
+                            <button class="btn btn-secondary" id="btn-open-connect-tool" title="Connect external graph visualizers, Logseq, or Neo4j">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                                </svg>
+                                <span>Connect External Tool</span>
+                            </button>
                             <button class="btn btn-primary" id="btn-add-memory">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -305,7 +319,7 @@
                                 </svg>
                                 <span>Add Memory Note</span>
                             </button>
-                            <button class="btn btn-secondary" id="btn-refresh-brain">
+                            <button class="btn btn-secondary" id="btn-refresh-brain" title="Sync brain state">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <polyline points="23 4 23 10 17 10"></polyline>
                                     <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
@@ -319,8 +333,25 @@
                     <div class="metrics-grid">
                         <div class="metric-card">
                             <div class="metric-header">
-                                <span class="metric-title">Persistent Memories</span>
+                                <span class="metric-title">Knowledge Graph Nodes</span>
                                 <div class="metric-icon-box purple">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="18" cy="5" r="3"></circle>
+                                        <circle cx="6" cy="12" r="3"></circle>
+                                        <circle cx="18" cy="19" r="3"></circle>
+                                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="metric-value" id="brain-stat-graph-nodes">0</div>
+                            <div class="metric-subtitle">Interconnected entities</div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <span class="metric-title">Persistent Memories</span>
+                                <div class="metric-icon-box green">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <circle cx="12" cy="12" r="10"></circle>
                                         <line x1="12" y1="16" x2="12" y2="12"></line>
@@ -348,36 +379,33 @@
 
                         <div class="metric-card">
                             <div class="metric-header">
-                                <span class="metric-title">Lines of Code Modified</span>
-                                <div class="metric-icon-box green">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <polyline points="16 18 22 12 16 6"></polyline>
-                                        <polyline points="8 6 2 12 8 18"></polyline>
-                                    </svg>
-                                </div>
-                            </div>
-                            <div class="metric-value text-green" id="brain-stat-loc">0</div>
-                            <div class="metric-subtitle">Tracked in partition</div>
-                        </div>
-
-                        <div class="metric-card">
-                            <div class="metric-header">
-                                <span class="metric-title">Tech Runtime</span>
+                                <span class="metric-title">External Second Brains</span>
                                 <div class="metric-icon-box amber">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="2" y="3" width="20" height="14" rx="2"></rect>
-                                        <line x1="8" y1="21" x2="16" y2="21"></line>
+                                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                                        <polyline points="2 17 12 22 22 17"></polyline>
+                                        <polyline points="2 12 12 17 22 12"></polyline>
                                     </svg>
                                 </div>
                             </div>
-                            <div class="metric-value" id="brain-stat-runtime">Detecting...</div>
-                            <div class="metric-subtitle">Verified in sandbox</div>
+                            <div class="metric-value" id="brain-stat-connected-tools">1</div>
+                            <div class="metric-subtitle">Obsidian / Logseq / Neo4j</div>
                         </div>
                     </div>
 
                     <!-- Brain Tabs Navigation -->
                     <div class="brain-tabs-nav">
-                        <button class="brain-tab active" data-tab="memories">
+                        <button class="brain-tab active" data-tab="graph">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="18" cy="5" r="3"></circle>
+                                <circle cx="6" cy="12" r="3"></circle>
+                                <circle cx="18" cy="19" r="3"></circle>
+                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                            </svg>
+                            <span>Interactive Knowledge Graph (Obsidian View)</span>
+                        </button>
+                        <button class="brain-tab" data-tab="memories">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                                 <polyline points="14 2 14 8 20 8"></polyline>
@@ -400,25 +428,120 @@
                             </svg>
                             <span>Tech Stack & System Directives</span>
                         </button>
+                        <button class="brain-tab" data-tab="bridges">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                            </svg>
+                            <span>External Second Brain Bridges</span>
+                        </button>
                     </div>
 
-                    <!-- Brain Tab 1: Memories -->
-                    <div class="brain-tab-content active" id="brain-tab-memories">
+                    <!-- Brain Tab 1: Interactive Obsidian Knowledge Graph -->
+                    <div class="brain-tab-content active" id="brain-tab-graph">
+                        <div class="graph-card">
+                            <div class="graph-toolbar">
+                                <div class="graph-search-box">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="11" cy="11" r="8"></circle>
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                    </svg>
+                                    <input type="text" id="graph-search-input" placeholder="Search node in graph...">
+                                </div>
+                                <div class="graph-filter-group">
+                                    <button class="graph-filter-pill active" data-filter="all">All</button>
+                                    <button class="graph-filter-pill" data-filter="memory">Memories</button>
+                                    <button class="graph-filter-pill" data-filter="agent">Agents</button>
+                                    <button class="graph-filter-pill" data-filter="file">Files</button>
+                                    <button class="graph-filter-pill" data-filter="tool">Services & Tools</button>
+                                    <button class="graph-filter-pill" data-filter="external">Connected Brains</button>
+                                </div>
+                                <div class="graph-actions-group">
+                                    <button class="btn-graph-action" id="btn-toggle-graph-physics" title="Pause or Resume spring physics simulation">
+                                        <span id="physics-icon">⏸</span> <span id="physics-label">Freeze</span>
+                                    </button>
+                                    <button class="btn-graph-action" id="btn-recenter-graph" title="Recenter Camera">
+                                        <span>⤢</span> Center
+                                    </button>
+                                    <button class="btn-graph-action" id="btn-zoom-in" title="Zoom In">＋</button>
+                                    <button class="btn-graph-action" id="btn-zoom-out" title="Zoom Out">－</button>
+                                    <span class="graph-stats-chip" id="graph-stats-chip">18 Nodes • 26 Edges</span>
+                                </div>
+                            </div>
+
+                            <div class="obsidian-graph-canvas-wrap" id="graph-canvas-wrap">
+                                <canvas id="obsidian-graph-canvas"></canvas>
+                                <div class="graph-legend">
+                                    <div class="legend-item"><span class="legend-dot root"></span> Partition Root</div>
+                                    <div class="legend-item"><span class="legend-dot memory"></span> Memories</div>
+                                    <div class="legend-item"><span class="legend-dot agent"></span> Agents</div>
+                                    <div class="legend-item"><span class="legend-dot file"></span> Files</div>
+                                    <div class="legend-item"><span class="legend-dot tool"></span> Services</div>
+                                    <div class="legend-item"><span class="legend-dot external"></span> External Brains</div>
+                                </div>
+
+                                <!-- Floating Node Inspector HUD -->
+                                <div class="graph-node-inspector" id="graph-node-inspector" style="display: none;">
+                                    <div class="inspector-header">
+                                        <div class="inspector-badge-row">
+                                            <span class="inspector-type-badge" id="inspector-badge">Memory</span>
+                                            <span class="inspector-category" id="inspector-category">Architecture</span>
+                                        </div>
+                                        <button class="inspector-close" id="btn-close-inspector">&times;</button>
+                                    </div>
+                                    <h4 class="inspector-title" id="inspector-title">Design System Guideline</h4>
+                                    <p class="inspector-desc" id="inspector-desc">Strictly adhere to Apple iOS / macOS Sequoia dark theme.</p>
+                                    <div class="inspector-connections">
+                                        <span class="inspector-subtitle">Connected Nodes:</span>
+                                        <div class="inspector-links-list" id="inspector-links-list">
+                                            <!-- Dynamically populated -->
+                                        </div>
+                                    </div>
+                                    <div class="inspector-footer">
+                                        <button class="btn-inspector-action" id="btn-inspector-action">View Full Note</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Brain Tab 2: Memories -->
+                    <div class="brain-tab-content" id="brain-tab-memories">
                         <div class="memories-grid" id="brain-memories-container">
                             <!-- Populated dynamically -->
                         </div>
                     </div>
 
-                    <!-- Brain Tab 2: Agent Runs Timeline -->
+                    <!-- Brain Tab 3: Agent Runs Timeline -->
                     <div class="brain-tab-content" id="brain-tab-history">
                         <div class="agent-runs-timeline" id="brain-runs-container">
                             <!-- Populated dynamically -->
                         </div>
                     </div>
 
-                    <!-- Brain Tab 3: Tech Directives -->
+                    <!-- Brain Tab 4: Tech Directives -->
                     <div class="brain-tab-content" id="brain-tab-tech">
                         <div class="tech-spec-card" id="brain-tech-container">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Brain Tab 5: External Second Brain Bridges -->
+                    <div class="brain-tab-content" id="brain-tab-bridges">
+                        <div class="bridges-header-card">
+                            <div class="bridges-header-info">
+                                <h3>External Second Brain & Knowledge Graph Bridges</h3>
+                                <p>Connect AgentOS partitions with your preferred open-source knowledge graph software, local Obsidian vaults, Logseq notebooks, or property graph databases.</p>
+                            </div>
+                            <button class="btn btn-primary" id="btn-add-external-tool-card">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                                <span>Connect External Tool</span>
+                            </button>
+                        </div>
+                        <div class="external-tools-grid" id="external-tools-container">
                             <!-- Populated dynamically -->
                         </div>
                     </div>
@@ -971,6 +1094,91 @@
             </div>
         </div>
     </div>
+    <!-- Modal for Connect External Second Brain / Graph Tool -->
+    <div class="modal-overlay" id="connect-external-tool-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Connect External Second Brain / Graph Tool</h3>
+                <button class="modal-close-btn" id="btn-close-ext-tool-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Tool / Platform Name</label>
+                    <input type="text" id="modal-ext-name" class="form-input" placeholder="e.g. My Obsidian Vault, Team Logseq Graph, Local Neo4j Visualizer">
+                </div>
+                <div class="form-group">
+                    <label>Integration Type</label>
+                    <select id="modal-ext-type" class="form-select">
+                        <option value="obsidian">Obsidian Vault (Local Markdown + [[wikilinks]])</option>
+                        <option value="logseq">Logseq Graph (Local Outliner & Journals)</option>
+                        <option value="foam">Foam / Dendron (VS Code Knowledge Graph)</option>
+                        <option value="neo4j">Neo4j / Memgraph (Property Graph Database)</option>
+                        <option value="custom">Custom Open-Source Graph API / Webhook</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Directory Path or Connection Endpoint</label>
+                    <input type="text" id="modal-ext-endpoint" class="form-input" placeholder="e.g. C:\Users\LOL\Documents\ObsidianVault or http://127.0.0.1:7474">
+                </div>
+                <div class="form-group">
+                    <label>Synchronization Mode</label>
+                    <select id="modal-ext-sync" class="form-select">
+                        <option value="Auto-Sync (Live)">Auto-Sync (Live Bidirectional Sync)</option>
+                        <option value="On-Demand">On-Demand Sync</option>
+                        <option value="REST Webhook">Event Stream / REST Webhook</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Description & Scope (Optional)</label>
+                    <textarea id="modal-ext-desc" class="form-textarea" placeholder="Describe the second brain setup or notes hierarchy..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-cancel-ext-tool-modal">Cancel</button>
+                <button class="btn btn-primary" id="btn-confirm-connect-ext-tool">
+                    <span>Connect & Sync Tool</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Export Obsidian Vault -->
+    <div class="modal-overlay" id="export-obsidian-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Export to Obsidian Knowledge Vault</h3>
+                <button class="modal-close-btn" id="btn-close-export-obsidian-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="obsidian-export-banner">
+                    <div class="obsidian-icon">💎</div>
+                    <div>
+                        <h4 style="color: #fff; margin-bottom: 4px;">Obsidian Markdown Vault Generator</h4>
+                        <p style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.4;">
+                            Generates standard Obsidian-compatible Markdown notes with YAML metadata, bidirectional <code style="color: #af52de;">[[wikilinks]]</code>, and preset <code style="color: #30d158;">.obsidian/graph.json</code> graph physics coloring.
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-top: 16px;">
+                    <label>Export Target Folder (WSL2 / Windows Synced)</label>
+                    <input type="text" id="modal-export-path" class="form-input" readonly>
+                </div>
+                <div class="export-stats-preview" id="export-stats-preview" style="background: rgba(255,255,255,0.04); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 14px; margin-top: 12px; font-size: 0.85rem; color: var(--text-secondary);">
+                    <span>Click "Generate & Export Vault" to compile all memories and agent logs.</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-close-export-modal">Close</button>
+                <button class="btn btn-secondary" id="btn-open-vault-explorer" style="display: none;">
+                    <span>Open in Windows Explorer</span>
+                </button>
+                <button class="btn btn-primary" id="btn-confirm-export-obsidian">
+                    <span>Generate & Export Vault</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div class="toast-container" id="toast-container"></div>
 
     <script src="app.js"></script>

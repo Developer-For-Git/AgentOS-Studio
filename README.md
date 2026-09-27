@@ -16,6 +16,101 @@
 
 ---
 
+## ⚡ Quickstart & Installation Guide
+
+Get AgentOS Studio and the sandboxed Sub-OS running on Windows in minutes.
+
+### 📋 Prerequisites
+* **Windows 10 (Build 19041+)** or **Windows 11** (64-bit).
+* **WSL2 enabled** with Virtual Machine Platform (`wsl --status`).
+* **Node.js 18+** and **npm** installed on Windows.
+
+---
+
+### 🚀 Option A: 1-Command Automated Setup (Recommended)
+Open **PowerShell as Administrator** and run:
+```powershell
+irm https://raw.githubusercontent.com/Developer-For-Git/AgentOS-Studio/main/install.ps1 | iex
+```
+This automated script will:
+1. Validate WSL2 virtualization features.
+2. Initialize and configure the isolated **AgentOS Ubuntu 24.04 LTS** microVM.
+3. Apply hardware security rules (`automount = false`, `appendWindowsPath = false`).
+4. Mount the secure `/workspace` partition gateway.
+5. Install and launch the desktop studio.
+
+---
+
+### 🛠️ Option B: Step-by-Step Manual Setup
+
+#### Step 1: Clone the Repository
+```powershell
+git clone https://github.com/Developer-For-Git/AgentOS-Studio.git
+cd AgentOS-Studio
+```
+
+#### Step 2: Configure Environment & Free Model Provider
+```powershell
+Copy-Item .env.example .env
+# Edit .env to set your preferred free model provider key or custom OpenAI/Anthropic endpoint
+```
+
+#### Step 3: Initialize the AgentOS Sub-OS Sandbox
+```powershell
+# In PowerShell (Administrator):
+wsl --import AgentOS ./wsl-distro/install-root ./wsl-distro/ubuntu-rootfs.tar.gz --version 2
+# Or run the included provisioning script:
+.\scripts\setup-agentos-wsl.ps1
+```
+
+#### Step 4: Install Dependencies & Launch Desktop Studio
+```powershell
+cd desktop
+npm install
+npm start
+```
+
+---
+
+### 🔌 Connecting Your IDEs & Autonomous Agents
+
+Once the desktop studio is open, you can immediately connect your favorite tools:
+* **Cursor & Cursor Pro:** Open `workspace/projects/<partition-name>`. Terminal sessions and AI composer tools run inside the sandboxed sub-OS while editing files natively on Windows.
+* **Google Antigravity IDE:** Point workspace root to `workspace/projects/<partition-name>`. DeepMind agentic pairing runs directly within the hardware-isolated microVM.
+* **VS Code:** Run `code workspace/projects/<partition-name>` or launch via the 1-click launcher inside the **Partitions** tab.
+* **Antigravity CLI (`agy`), Claude Code, Aider, Kilo Code:** Run agents inside the **Console Runner** tab or in the sub-OS terminal with free reasoning models routed through `http://127.0.0.1:8000`.
+
+---
+
+## 🧠 Obsidian Knowledge Graph & External Second Brain Bridges
+
+AgentOS includes a **Secondary Project Brain** equipped with an interactive knowledge graph engine modeled after Obsidian's graph view, plus connectors for your favorite knowledge tools.
+
+<p align="center">
+  <img src="./assets/agentos-studio-brain-graph.png" width="95%" alt="Obsidian Interactive Knowledge Graph">
+</p>
+
+### Key Capabilities:
+* **Interactive 60fps Force-Directed Physics Graph:** Nodes represent Partitions, Persistent Memories, Past Agent Execution Runs, Source Files, Sub-OS Services, and External Tools. Built with Coulomb repulsion, Hooke spring attraction, center gravity, and smooth damping.
+* **Glowing Hover & Wikilink Highlighting:** Hover over any node to highlight its connected dependencies and dim unrelated items.
+* **Floating Node Inspector HUD:** Click any node to inspect its category, detailed content, connected bidirectional `[[wikilinks]]`, and jump straight to the source note or agent transcript.
+* **Search & Filter Controls:** Filter by *Memories*, *Agents*, *Files*, *Services*, or *Connected Brains*, or search in real time with auto-zoom focusing.
+* **1-Click Obsidian Vault Exporter:** Compiles partition knowledge into standard Markdown notes with frontmatter, `[[wikilinks]]`, and a ready-to-use `.obsidian/graph.json` configuration. Open `/workspace/projects/<partition>/.agentos/obsidian` directly in the Obsidian desktop application!
+
+<p align="center">
+  <img src="./assets/agentos-studio-brain-bridges.png" width="95%" alt="External Second Brain Bridges">
+</p>
+
+### 🌉 Connect External Second Brain Tools:
+AgentOS can bridge project knowledge directly with third-party tools and graph engines:
+1. **Obsidian Vault Sync:** Direct bidirectional sync with your local Obsidian vault (`.agentos/obsidian`).
+2. **Logseq Outliner Graph:** Block-level outline knowledge graph with bidirectional hierarchy syncing (`.agentos/logseq`).
+3. **Neo4j / Memgraph Property Graph DB:** Enterprise property graph database with Cypher query support for advanced cross-project relations.
+4. **Open-Source Graph Webhooks & APIs:** Stream nodes and edges JSON to any open-source graph visualizer (such as Cytoscape, Gephi, Cosmos, or custom webhooks).
+5. **Custom Connector Modal:** Add your own HTTP REST endpoints, webhook URLs, and file-watcher pipelines with 1 click.
+
+---
+
 ## 📸 Desktop Application Walkthrough
 
 ### 1. System Health & Security Dashboard
@@ -30,43 +125,49 @@ Manage project micro-environments with dedicated virtual environments, Git roots
   <img src="./assets/agentos-studio-partitions.png" width="92%" alt="Application Partitions">
 </p>
 
-### 3. Autonomous Agent Skills Hub & skills.sh Live Registry
+### 3. Project Brain: Obsidian Knowledge Graph View
+Interactive force-directed graph view linking memories, agent conversation transcripts, files, and background tools.
+<p align="center">
+  <img src="./assets/agentos-studio-brain-graph.png" width="92%" alt="Interactive Knowledge Graph">
+</p>
+
+### 4. External Second Brain & Graph Bridges
+Connect with Obsidian, Logseq, Neo4j, or open-source graph visualizers and webhooks.
+<p align="center">
+  <img src="./assets/agentos-studio-brain-bridges.png" width="92%" alt="External Second Brain Bridges">
+</p>
+
+### 5. Autonomous Agent Skills Hub & skills.sh Live Registry
 Enable verified development capabilities (Refactoring, AST transformations, Security scanning, Playwright E2E) and install community skills from skills.sh with 1 click.
 <p align="center">
-  <img src="./assets/previews/view-skills.png" width="92%" alt="Autonomous Agent Skills">
+  <img src="./assets/agentos-studio-skills.png" width="92%" alt="Autonomous Agent Skills">
 </p>
 <p align="center">
   <img src="./assets/previews/view-skillsh.png" width="92%" alt="skills.sh Live Registry">
 </p>
 
-### 4. Model Context Protocol (MCP) Hub & Project Authorization Matrix
+### 6. Model Context Protocol (MCP) Hub & Project Authorization Matrix
 Configure local and remote MCP tool servers with zero host escape. Granular matrix controls let you toggle `Full Access`, `Read Only`, or `Blocked` per partition.
 <p align="center">
-  <img src="./assets/previews/view-mcp.png" width="92%" alt="Model Context Protocol Hub">
+  <img src="./assets/agentos-studio-mcp.png" width="92%" alt="Model Context Protocol Hub">
 </p>
 <p align="center">
   <img src="./assets/previews/view-mcp-matrix.png" width="92%" alt="MCP Project Authorization Matrix">
 </p>
 
-### 5. Runtime Extensions & Background Sidecars
+### 7. Runtime Extensions & Background Sidecars
 Equip AI agents with live security masking, automatic pre-execution snapshots, hot-reload preview listeners, and inference telemetry.
 <p align="center">
-  <img src="./assets/previews/view-plugins.png" width="92%" alt="Plugins and Extensions">
+  <img src="./assets/agentos-studio-plugins.png" width="92%" alt="Plugins and Extensions">
 </p>
 
-### 6. Project Brain & Historical Memory
-Secondary persistent brain for every partition. Stores codebase architecture notes, agent conversation transcripts, and system directives so AI agents never lose context across sessions.
-<p align="center">
-  <img src="./assets/previews/view-brain.png" width="92%" alt="Project Brain & Historical Memory">
-</p>
-
-### 7. 1-Click Developer Tool Store
+### 8. 1-Click Developer Tool Store
 Install databases, cloud CLIs, and container engines directly into the isolated sandbox without polluting your Windows registry.
 <p align="center">
   <img src="./assets/agentos-studio-tool-store.png" width="92%" alt="Tool Store">
 </p>
 
-### 8. Console Runner & Sandbox Terminal
+### 9. Console Runner & Sandbox Terminal
 Execute commands as a standard user or with passwordless root (`sudo`) with instant preset chips.
 <p align="center">
   <img src="./assets/agentos-studio-console-runner.png" width="92%" alt="Console Runner">
@@ -115,6 +216,15 @@ flowchart TD
         Bridge --> AgentBox["🤖 Autonomous Agents (Antigravity CLI / Claude / Aider / OpenCode)"]
         AgentBox --> Store["📦 1-Click Tool Store (Postgres / Redis / AWS / Supabase)"]
         AgentBox --> Snapshots["📸 Instant Snapshots & Rollback"]
+        AgentBox --> Brain["🧠 Secondary Project Brain (Obsidian Graph & Wikilinks)"]
+    end
+
+    subgraph ExternalTools ["🌐 External Knowledge & Graph Tools"]
+        direction TB
+        ObsidianApp["💎 Obsidian Desktop App"]
+        LogseqApp["🌿 Logseq Outliner"]
+        Neo4jDB["🕸️ Neo4j Graph DB"]
+        GraphAPI["⚡ Open-Source Graph Webhooks"]
     end
 
     subgraph Gateway ["📂 Isolated Workspace Gateway"]
@@ -125,6 +235,7 @@ flowchart TD
     Studio ==> Barrier ==> SubOS
     IDEs <==>|Direct File Edit| WorkPartition
     AgentBox -->|Execute & Code| WorkPartition
+    Brain <==>|Sync & Export| ExternalTools
     Bridge -->|Free Models| Cloud["☁️ Free Reasoning Models & AI Providers"]
 ```
 
@@ -150,8 +261,8 @@ sequenceDiagram
     Agent->>SubOS: Run root commands (apt, npm, python, pipx, test)
     Agent--xHost: Attempt to read C:\ or personal files (BLOCKED: unmounted)
     Agent->>SubOS: Save project code in /workspace
-    SubOS-->>Studio: Real-time telemetry (CPU, RAM, Partitions)
-    Studio-->>Dev: Ready to inspect in Cursor, Antigravity IDE, or Explorer
+    SubOS-->>Studio: Real-time telemetry (CPU, RAM, Partitions, Brain Graph)
+    Studio-->>Dev: Ready to inspect in Cursor, Antigravity IDE, Obsidian, or Explorer
 ```
 
 ---
@@ -196,57 +307,6 @@ AgentOS includes an internal daemon (`scripts/opencode-bridge.js`) running on `h
 * Accepts standard **OpenAI `/v1/chat/completions`** requests.
 * Accepts native **Anthropic `/v1/messages`** streaming requests with thinking tokens.
 * **Universal Model Compatibility:** Routes requests to unlimited free models from your preferred model provider, local LLMs (Ollama / vLLM), or custom OpenAI-compatible endpoints with zero configuration required.
-
----
-
-## 🎛️ Features & Capabilities
-
-1. **System Health & Security Dashboard:**
-   - Real-time kernel status, RAM consumption, and virtual disk size.
-   - Live Host Protection Shield confirming drive blackout.
-2. **Visual Application Partitions:**
-   - Create sandboxed development partitions with 1 click (Python 3.12, Node.js 22 LTS, Fullstack, or Blank).
-   - Instant launch into VS Code or Windows Explorer.
-3. **1-Click Developer Tool Store:**
-   - Install CLI tools directly into the isolated sandbox without polluting Windows: AWS CLI v2, Supabase CLI, Stripe CLI, Redis, PostgreSQL, and Podman/Docker.
-4. **Console Runner & Sandbox Terminal:**
-   - Execute commands directly inside the sub-OS as a standard user or with passwordless root (`sudo`).
-   - Quick command chips for instant health checks and diagnostics.
-5. **Safety Snapshots & Rollback:**
-   - Take instant point-in-time snapshots before testing untrusted code.
-   - Roll back to a clean state with 1 click if an agent breaks something.
-
----
-
-## ⚡ Quickstart & 1-Command Installation
-
-### Prerequisites
-* Windows 10 (Build 19041+) or Windows 11
-* WSL2 enabled (Virtual Machine Platform)
-
-### One-Command Setup
-Open PowerShell as Administrator and run:
-```powershell
-irm https://raw.githubusercontent.com/Developer-For-Git/AgentOS-Studio/main/install.ps1 | iex
-```
-
-### Manual Setup
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/Developer-For-Git/AgentOS-Studio.git
-   cd AgentOS-Studio
-   ```
-2. Copy the environment template:
-   ```bash
-   cp .env.example .env
-   # Configure your free model provider or custom API keys in .env
-   ```
-3. Launch the desktop studio:
-   ```bash
-   cd desktop
-   npm install
-   npm start
-   ```
 
 ---
 

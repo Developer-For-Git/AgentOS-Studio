@@ -2243,4 +2243,453 @@ body {
     cursor: default;
 }
 
+/* =========================================================
+   Obsidian-Style Interactive Knowledge Graph
+   ========================================================= */
+.graph-card {
+    background: rgba(14, 14, 20, 0.85);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    margin-bottom: 24px;
+    backdrop-filter: blur(25px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.graph-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 18px;
+    background: rgba(22, 22, 30, 0.7);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.graph-search-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-pill);
+    padding: 5px 12px;
+    min-width: 200px;
+}
+
+.graph-search-box svg {
+    width: 14px;
+    height: 14px;
+    color: var(--text-muted);
+}
+
+.graph-search-box input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #fff;
+    font-size: 0.8rem;
+    width: 100%;
+}
+
+.graph-filter-group {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.graph-filter-pill {
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 1px solid var(--border-subtle);
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.graph-filter-pill:hover, .graph-filter-pill.active {
+    background: rgba(255, 255, 255, 0.16);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.24);
+}
+
+.graph-actions-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+}
+
+.btn-graph-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    font-size: 0.76rem;
+    font-weight: 600;
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.btn-graph-action:hover {
+    background: #ffffff;
+    color: #050507;
+}
+
+.graph-stats-chip {
+    font-size: 0.74rem;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    font-weight: 500;
+}
+
+.obsidian-graph-canvas-wrap {
+    position: relative;
+    width: 100%;
+    height: 520px;
+    background: radial-gradient(circle at center, #12121c 0%, #08080c 100%);
+    overflow: hidden;
+    cursor: grab;
+}
+
+.obsidian-graph-canvas-wrap:active {
+    cursor: grabbing;
+}
+
+#obsidian-graph-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.graph-legend {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    display: flex;
+    gap: 14px;
+    background: rgba(16, 16, 24, 0.82);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-pill);
+    padding: 6px 14px;
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    pointer-events: none;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.legend-dot.root { background: #af52de; }
+.legend-dot.memory { background: #30d158; }
+.legend-dot.agent { background: #0a84ff; }
+.legend-dot.file { background: #ffd60a; }
+.legend-dot.tool { background: #ff9f0a; }
+.legend-dot.external { background: #ff375f; }
+
+.graph-node-inspector {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 290px;
+    max-height: 440px;
+    overflow-y: auto;
+    background: rgba(22, 22, 30, 0.92);
+    backdrop-filter: blur(35px);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.inspector-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.inspector-badge-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.inspector-type-badge {
+    font-size: 0.68rem;
+    padding: 2px 8px;
+    border-radius: var(--radius-pill);
+    font-weight: 700;
+    text-transform: uppercase;
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+}
+
+.inspector-category {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+.inspector-close {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.3rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.inspector-close:hover {
+    color: #fff;
+}
+
+.inspector-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.3;
+}
+
+.inspector-desc {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.45;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 8px 10px;
+    border-radius: var(--radius-xs);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.inspector-subtitle {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 600;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.inspector-links-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.inspector-link-chip {
+    font-size: 0.7rem;
+    background: rgba(255, 255, 255, 0.07);
+    color: var(--text-secondary);
+    padding: 3px 8px;
+    border-radius: var(--radius-xs);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.btn-inspector-action {
+    width: 100%;
+    padding: 8px 14px;
+    border-radius: var(--radius-pill);
+    background: #ffffff;
+    color: #050507;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.btn-inspector-action:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(255, 255, 255, 0.25);
+}
+
+/* =========================================================
+   External Second Brain Bridges Tab
+   ========================================================= */
+.bridges-header-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 22px 26px;
+    margin-bottom: 24px;
+    backdrop-filter: blur(25px);
+}
+
+.bridges-header-info h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 4px;
+}
+
+.bridges-header-info p {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    max-width: 650px;
+    line-height: 1.45;
+}
+
+.external-tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.ext-tool-card {
+    background: rgba(24, 24, 32, 0.85);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    backdrop-filter: blur(25px);
+    transition: var(--transition);
+}
+
+.ext-tool-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.18);
+    background: rgba(30, 30, 40, 0.9);
+}
+
+.ext-tool-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.ext-tool-icon-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ext-tool-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.ext-tool-title h4 {
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.ext-tool-type {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+.ext-tool-status {
+    font-size: 0.68rem;
+    padding: 2px 8px;
+    border-radius: var(--radius-pill);
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.ext-tool-status.connected {
+    background: rgba(48, 209, 88, 0.15);
+    color: var(--accent-green);
+    border: 1px solid rgba(48, 209, 88, 0.3);
+}
+
+.ext-tool-status.ready {
+    background: rgba(10, 132, 255, 0.15);
+    color: var(--accent-blue);
+    border: 1px solid rgba(10, 132, 255, 0.3);
+}
+
+.ext-tool-status.active {
+    background: rgba(255, 159, 10, 0.15);
+    color: var(--accent-amber);
+    border: 1px solid rgba(255, 159, 10, 0.3);
+}
+
+.ext-tool-desc {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    flex: 1 1 auto;
+}
+
+.ext-tool-endpoint {
+    font-size: 0.72rem;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Mono", monospace;
+    background: rgba(0, 0, 0, 0.35);
+    padding: 6px 10px;
+    border-radius: var(--radius-xs);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    color: #a1a1a6;
+    word-break: break-all;
+}
+
+.ext-tool-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ext-tool-mode {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+.obsidian-export-banner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(175, 82, 222, 0.12);
+    border: 1px solid rgba(175, 82, 222, 0.28);
+    border-radius: var(--radius-md);
+    padding: 14px 18px;
+}
+
+.obsidian-icon {
+    font-size: 2rem;
+}
+
+
 

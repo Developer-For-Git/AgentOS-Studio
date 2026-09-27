@@ -46,10 +46,15 @@ contextBridge.exposeInMainWorld('api', {
     // Custom Tools Installation
     installCustomTool: (data) => ipcRenderer.invoke('install-custom-tool', data),
 
-    // Project Brain (Secondary Brain / Memory / History)
+    // Project Brain (Secondary Brain / Obsidian Graph / Memory)
     getProjectBrain: (projectName) => ipcRenderer.invoke('get-project-brain', projectName),
     addBrainMemory: (projectName, memory) => ipcRenderer.invoke('add-brain-memory', { projectName, memory }),
     deleteBrainMemory: (projectName, memoryId) => ipcRenderer.invoke('delete-brain-memory', { projectName, memoryId }),
+    getBrainGraph: (projectName) => ipcRenderer.invoke('get-brain-graph', projectName),
+    exportBrainObsidian: (projectName, targetDir) => ipcRenderer.invoke('export-brain-obsidian', { projectName, targetDir }),
+    getExternalBrainTools: (projectName) => ipcRenderer.invoke('get-external-brain-tools', projectName),
+    connectExternalBrainTool: (projectName, toolData) => ipcRenderer.invoke('connect-external-brain-tool', { projectName, toolData }),
+    disconnectExternalBrainTool: (projectName, toolId) => ipcRenderer.invoke('disconnect-external-brain-tool', { projectName, toolId }),
 
     // Visual QA Screenshot Capture
     captureScreen: (filename) => ipcRenderer.invoke('capture-screen', filename)

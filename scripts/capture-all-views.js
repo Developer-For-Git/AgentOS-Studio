@@ -53,20 +53,35 @@ ipcMain.handle('install-skill-from-registry', (e, id) => store.installSkillFromR
 ipcMain.handle('get-mcp-servers', () => store.getMcpServers());
 ipcMain.handle('get-plugins', () => store.getPlugins());
 ipcMain.handle('get-project-brain', (event, p) => store.getProjectBrain(p || 'space-bunny-web'));
+ipcMain.handle('get-brain-graph', (e, p) => store.getBrainGraph(p || 'space-bunny-web'));
+ipcMain.handle('export-brain-obsidian', (e, { projectName, targetDir }) => store.exportBrainObsidian(projectName, targetDir));
+ipcMain.handle('get-external-brain-tools', (e, p) => store.getExternalBrainTools(p || 'space-bunny-web'));
+ipcMain.handle('connect-external-brain-tool', (e, { projectName, toolData }) => store.connectExternalBrainTool(projectName, toolData));
+ipcMain.handle('disconnect-external-brain-tool', (e, { projectName, toolId }) => store.disconnectExternalBrainTool(projectName, toolId));
 ipcMain.handle('get-snapshots', async () => ([]));
 ipcMain.handle('open-explorer', () => true);
 ipcMain.handle('open-editor', () => true);
 ipcMain.handle('run-command', () => ({ success: true, stdout: 'Done' }));
 
 async function captureView(win, pageKey, filename, postAction) {
-    await win.webContents.executeJavaScript(`
-        const btn = document.querySelector('.nav-item[data-page="${pageKey}"]');
-        if (btn) btn.click();
-    `);
-    if (postAction) {
-        await win.webContents.executeJavaScript(postAction);
+    try {
+        await win.webContents.executeJavaScript(`
+            (function() {
+                const btn = document.querySelector('.nav-item[data-page="${pageKey}"]');
+                if (btn) btn.click();
+                const pc = document.querySelector('.page-container');
+                if (pc) pc.scrollTop = 0;
+            })();
+        `);
+        await new Promise(r => setTimeout(r, 900));
+        if (postAction) {
+            await win.webContents.executeJavaScript(`(function() { ${postAction} })();`);
+            await new Promise(r => setTimeout(r, 1200));
+        }
+    } catch (e) {
+        console.error(`Error during captureView for ${pageKey}:`, e);
     }
-    await new Promise(r => setTimeout(r, 1200));
+    await new Promise(r => setTimeout(r, 1000));
     const img = await win.webContents.capturePage();
     const outPreview = path.join(previewDir, filename);
     fs.writeFileSync(outPreview, img.toPNG());
@@ -76,14 +91,18 @@ async function captureView(win, pageKey, filename, postAction) {
 
 app.whenReady().then(async () => {
     const win = new BrowserWindow({
-        width: 1220,
-        height: 840,
+        width: 1280,
+        height: 900,
         show: false,
         backgroundColor: '#050507',
         webPreferences: {
             preload: path.join(desktopDir, 'preload.js'),
             contextIsolation: true
         }
+    });
+
+    win.webContents.on('console-message', (e, level, msg) => {
+        console.log('[RENDERER CONSOLE]', msg);
     });
 
     await win.loadFile(path.join(desktopDir, 'renderer', 'index.html'));
@@ -96,7 +115,28 @@ app.whenReady().then(async () => {
     const partImg = await captureView(win, 'partitions', 'view-partitions.png');
     fs.writeFileSync(path.join(assetsDir, 'agentos-studio-partitions.png'), partImg.toPNG());
 
-    await captureView(win, 'brain', 'view-brain.png');
+    // Brain - Obsidian Knowledge Graph
+    const brainImg = await captureView(win, 'brain', 'view-brain.png', `
+        const sel = document.getElementById('brain-project-select');
+        if (sel) {
+            sel.value = 'space-bunny-web';
+            sel.dispatchEvent(new Event('change'));
+        }
+        const b = document.querySelector('.brain-tab[data-tab="graph"]');
+        if (b) b.click();
+        const pc = document.querySelector('.page-container');
+        if (pc) pc.scrollTop = 160;
+    `);
+    fs.writeFileSync(path.join(assetsDir, 'agentos-studio-brain-graph.png'), brainImg.toPNG());
+
+    // Brain - External Second Brain Bridges
+    const bridgesImg = await captureView(win, 'brain', 'view-brain-bridges.png', `
+        const b = document.querySelector('.brain-tab[data-tab="bridges"]');
+        if (b) b.click();
+        const pc = document.querySelector('.page-container');
+        if (pc) pc.scrollTop = 160;
+    `);
+    fs.writeFileSync(path.join(assetsDir, 'agentos-studio-brain-bridges.png'), bridgesImg.toPNG());
     
     const skillsImg = await captureView(win, 'skills', 'view-skills.png');
     fs.writeFileSync(path.join(assetsDir, 'agentos-studio-skills.png'), skillsImg.toPNG());
@@ -107,14 +147,14 @@ app.whenReady().then(async () => {
     `);
 
     const mcpImg = await captureView(win, 'mcp', 'view-mcp.png', `
-        const scrollElem = document.querySelector('.main-content');
-        if (scrollElem) scrollElem.scrollTop = 0;
+        const pc = document.querySelector('.page-container');
+        if (pc) pc.scrollTop = 0;
     `);
     fs.writeFileSync(path.join(assetsDir, 'agentos-studio-mcp.png'), mcpImg.toPNG());
 
     await captureView(win, 'mcp', 'view-mcp-matrix.png', `
-        const scrollElem = document.querySelector('.main-content');
-        if (scrollElem) scrollElem.scrollTop = scrollElem.scrollHeight;
+        const pc = document.querySelector('.page-container');
+        if (pc) pc.scrollTop = pc.scrollHeight;
     `);
 
     const plugImg = await captureView(win, 'plugins', 'view-plugins.png');

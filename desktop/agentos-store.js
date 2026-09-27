@@ -766,6 +766,353 @@ function deleteBrainMemory(projectName, memoryId) {
     return { success: true, brain };
 }
 
+// --- Obsidian-Style Knowledge Graph & External Tools ---
+const DEFAULT_EXTERNAL_TOOLS = [
+    {
+        id: "ext-obsidian",
+        name: "Obsidian Vault Sync",
+        type: "obsidian",
+        status: "connected",
+        endpoint: "/workspace/projects/{project}/.agentos/obsidian",
+        description: "Direct markdown vault with bidirectional [[wikilinks]], tags, and Obsidian graph.json support.",
+        syncMode: "Auto-Sync (Live)",
+        icon: "book-open"
+    },
+    {
+        id: "ext-logseq",
+        name: "Logseq Outliner Graph",
+        type: "logseq",
+        status: "ready",
+        endpoint: "/workspace/.agentos/logseq",
+        description: "Block-level outline knowledge graph with bidirectional hierarchy syncing.",
+        syncMode: "On-Demand",
+        icon: "git-branch"
+    },
+    {
+        id: "ext-neo4j",
+        name: "Neo4j / Memgraph Knowledge Graph",
+        type: "neo4j",
+        status: "ready",
+        endpoint: "bolt://localhost:7687",
+        description: "Enterprise property graph database with Cypher query support for cross-partition analytics.",
+        syncMode: "Cypher Stream",
+        icon: "database"
+    },
+    {
+        id: "ext-custom-webhook",
+        name: "Open-Source Graph Webhook / API",
+        type: "custom",
+        status: "active",
+        endpoint: "http://localhost:8080/api/graph",
+        description: "Streams nodes and edges JSON to any open-source graph visualizer (Cytoscape, Gephi, Cosmos).",
+        syncMode: "REST Webhook",
+        icon: "share-2"
+    }
+];
+
+function getExternalBrainTools(projectName) {
+    const safeName = (projectName || 'space-bunny-web').replace(/[^a-zA-Z0-9_-]/g, '');
+    const toolsFile = path.join(projectsDir, safeName, '.agentos', 'external_tools.json');
+    return readJson(toolsFile, DEFAULT_EXTERNAL_TOOLS);
+}
+
+function connectExternalBrainTool(projectName, toolData) {
+    const safeName = (projectName || 'space-bunny-web').replace(/[^a-zA-Z0-9_-]/g, '');
+    const toolsFile = path.join(projectsDir, safeName, '.agentos', 'external_tools.json');
+    const tools = getExternalBrainTools(safeName);
+
+    const newTool = {
+        id: "ext-" + Date.now(),
+        name: toolData.name || "Custom Graph Tool",
+        type: toolData.type || "custom",
+        status: "connected",
+        endpoint: toolData.endpoint || "http://localhost:3000",
+        description: toolData.description || "Connected external second brain / graph tool.",
+        syncMode: toolData.syncMode || "Auto-Sync",
+        icon: toolData.type === 'obsidian' ? 'book-open' : (toolData.type === 'neo4j' ? 'database' : 'share-2')
+    };
+
+    tools.unshift(newTool);
+    writeJson(toolsFile, tools);
+    return { success: true, tool: newTool, tools };
+}
+
+function disconnectExternalBrainTool(projectName, toolId) {
+    const safeName = (projectName || 'space-bunny-web').replace(/[^a-zA-Z0-9_-]/g, '');
+    const toolsFile = path.join(projectsDir, safeName, '.agentos', 'external_tools.json');
+    let tools = getExternalBrainTools(safeName);
+    tools = tools.filter(t => t.id !== toolId);
+    writeJson(toolsFile, tools);
+    return { success: true, tools };
+}
+
+function getBrainGraph(projectName) {
+    const safeName = (projectName || 'space-bunny-web').replace(/[^a-zA-Z0-9_-]/g, '');
+    const brain = getProjectBrain(safeName);
+    const externalTools = getExternalBrainTools(safeName);
+
+    const nodes = [];
+    const edges = [];
+    const nodeIds = new Set();
+
+    function addNode(node) {
+        if (!nodeIds.has(node.id)) {
+            nodeIds.add(node.id);
+            nodes.push(node);
+        }
+    }
+
+    function addEdge(source, target, relation = 'connected') {
+        if (source !== target) {
+            edges.push({ source, target, relation });
+        }
+    }
+
+    // 1. Root Node (Partition Hub)
+    addNode({
+        id: 'root',
+        label: safeName,
+        type: 'root',
+        category: 'Workspace Partition',
+        radius: 22,
+        color: '#af52de', // Purple
+        desc: brain.summary || 'Active Workspace Partition'
+    });
+
+    // 2. Memory Nodes
+    (brain.memories || []).forEach(m => {
+        addNode({
+            id: m.id,
+            label: m.title,
+            type: 'memory',
+            category: m.category || 'Memory Note',
+            content: m.content,
+            radius: 14,
+            color: '#30d158', // Apple Green
+            desc: m.content
+        });
+        addEdge('root', m.id, 'remembers');
+    });
+
+    // 3. Agent Session Nodes & File Nodes
+    const filesSeen = new Set();
+    (brain.agentRuns || []).forEach(r => {
+        addNode({
+            id: r.id,
+            label: r.agent,
+            type: 'agent',
+            category: 'Agent Runner',
+            task: r.task,
+            transcript: r.transcript,
+            radius: 15,
+            color: '#0a84ff', // Apple Blue
+            desc: `Task: ${r.task}`
+        });
+        addEdge('root', r.id, 'executed');
+
+        (r.filesTouched || []).forEach(f => {
+            const fileId = 'file-' + f;
+            if (!filesSeen.has(fileId)) {
+                filesSeen.add(fileId);
+                addNode({
+                    id: fileId,
+                    label: f,
+                    type: 'file',
+                    category: 'Source Asset',
+                    radius: 11,
+                    color: '#ffd60a', // Apple Yellow
+                    desc: `Partition source file: ${f}`
+                });
+            }
+            addEdge(r.id, fileId, 'modified');
+        });
+    });
+
+    // Ensure common files exist if not touched yet
+    ['index.html', 'styles.css', 'app.js'].forEach(f => {
+        const fileId = 'file-' + f;
+        if (!filesSeen.has(fileId)) {
+            filesSeen.add(fileId);
+            addNode({
+                id: fileId,
+                label: f,
+                type: 'file',
+                category: 'Source Asset',
+                radius: 11,
+                color: '#ffd60a',
+                desc: `Partition source file: ${f}`
+            });
+            addEdge('root', fileId, 'contains');
+        }
+    });
+
+    // 4. Services & Tool Nodes
+    const tools = [
+        { id: 'tool-bridge', label: 'Model Bridge (:8000)', type: 'tool', desc: 'Internal multi-protocol inference bridge with free models' },
+        { id: 'tool-server', label: 'HTTP Server (:5000)', type: 'tool', desc: 'Live Python HTTP preview server' },
+        { id: 'tool-git', label: 'Git Tools MCP', type: 'tool', desc: 'Version control MCP provider' },
+        { id: 'tool-fs', label: 'Filesystem MCP', type: 'tool', desc: 'Secure workspace filesystem MCP' }
+    ];
+
+    tools.forEach(t => {
+        addNode({
+            id: t.id,
+            label: t.label,
+            type: 'tool',
+            category: 'Sub-OS Service',
+            radius: 13,
+            color: '#ff9f0a', // Apple Orange
+            desc: t.desc
+        });
+        addEdge('root', t.id, 'provisions');
+    });
+
+    // Semantic connections between memories and tools / files
+    if (nodeIds.has('mem-101') && nodeIds.has('file-styles.css')) addEdge('mem-101', 'file-styles.css', 'guides');
+    if (nodeIds.has('mem-102') && nodeIds.has('tool-bridge')) addEdge('mem-102', 'tool-bridge', 'documents');
+    if (nodeIds.has('mem-103') && nodeIds.has('tool-server')) addEdge('mem-103', 'tool-server', 'allocates');
+    if (nodeIds.has('mem-103') && nodeIds.has('tool-bridge')) addEdge('mem-103', 'tool-bridge', 'allocates');
+
+    // 5. External Second Brain Tools
+    externalTools.forEach(et => {
+        if (et.status === 'connected' || et.status === 'active') {
+            addNode({
+                id: et.id,
+                label: et.name,
+                type: 'external',
+                category: 'External Second Brain',
+                radius: 14,
+                color: '#ff375f', // Apple Pink/Red
+                desc: `${et.description} (${et.endpoint})`
+            });
+            addEdge('root', et.id, 'syncs-with');
+        }
+    });
+
+    return {
+        projectName: safeName,
+        nodes,
+        edges,
+        stats: {
+            totalNodes: nodes.length,
+            totalEdges: edges.length,
+            memoriesCount: (brain.memories || []).length,
+            agentRunsCount: (brain.agentRuns || []).length,
+            filesCount: filesSeen.size,
+            externalToolsCount: externalTools.length
+        }
+    };
+}
+
+function exportBrainObsidian(projectName, targetDir) {
+    const safeName = (projectName || 'space-bunny-web').replace(/[^a-zA-Z0-9_-]/g, '');
+    const brain = getProjectBrain(safeName);
+
+    const vaultDir = targetDir || path.join(projectsDir, safeName, '.agentos', 'obsidian');
+    const memoriesDir = path.join(vaultDir, 'Memories');
+    const runsDir = path.join(vaultDir, 'AgentRuns');
+    const obsidianConfigDir = path.join(vaultDir, '.obsidian');
+
+    ensureDir(memoriesDir);
+    ensureDir(runsDir);
+    ensureDir(obsidianConfigDir);
+
+    // 1. Write INDEX.md
+    let indexMd = `# ${safeName} Knowledge Graph Hub 🧠\n\n`;
+    indexMd += `> Generated by **AgentOS Studio** — Persistent Secondary Brain for Autonomous AI Agents.\n\n`;
+    indexMd += `**Tags:** #agentos #second-brain #knowledge-graph #${safeName}\n\n`;
+    indexMd += `## 📋 Project Summary\n${brain.summary || 'Active Workspace Partition'}\n\n`;
+    indexMd += `## ⚙️ Architecture & Directives\n`;
+    indexMd += `- **Runtime Kernel:** ${brain.techStack?.runtime || 'Ubuntu 24.04 (WSL2)'}\n`;
+    indexMd += `- **Frontend Stack:** ${brain.techStack?.frontend || 'HTML5 / CSS3 / ES6'}\n`;
+    indexMd += `- **Design System:** ${brain.techStack?.designSystem || 'Apple iOS Dark Theme'}\n`;
+    indexMd += `- **Model Inference:** ${brain.techStack?.modelBackend || 'Internal Bridge :8000'}\n\n`;
+
+    indexMd += `## 🧠 Persistent Memories & Knowledge\n`;
+    (brain.memories || []).forEach(m => {
+        const safeTitle = m.title.replace(/[\/\\:*?"<>|]/g, '-');
+        indexMd += `- [[Memories/${safeTitle}|${m.title}]] — *${m.category || 'Note'}*\n`;
+
+        // Write individual memory note
+        let memMd = `---\n`;
+        memMd += `title: "${m.title}"\n`;
+        memMd += `category: "${m.category || 'General'}"\n`;
+        memMd += `date: "${m.date || new Date().toISOString()}"\n`;
+        memMd += `tags:\n  - agentos\n  - memory\n  - ${m.category ? m.category.toLowerCase() : 'note'}\n`;
+        memMd += `---\n\n`;
+        memMd += `# ${m.title}\n\n`;
+        memMd += `${m.content}\n\n`;
+        memMd += `---\n`;
+        memMd += `Back to [[INDEX|Knowledge Hub]]\n`;
+
+        fs.writeFileSync(path.join(memoriesDir, `${safeTitle}.md`), memMd, 'utf8');
+    });
+
+    indexMd += `\n## 🤖 Autonomous Agent Execution History\n`;
+    (brain.agentRuns || []).forEach(r => {
+        const safeAgent = (r.agent + '-' + (r.id || Date.now())).replace(/[\/\\:*?"<>|]/g, '-');
+        indexMd += `- [[AgentRuns/${safeAgent}|${r.agent}]] — ${r.task} (${r.outcome || 'Done'})\n`;
+
+        // Write individual run note
+        let runMd = `---\n`;
+        runMd += `agent: "${r.agent}"\n`;
+        runMd += `task: "${r.task}"\n`;
+        runMd += `outcome: "${r.outcome || 'Success'}"\n`;
+        runMd += `timestamp: "${r.timestamp || new Date().toISOString()}"\n`;
+        runMd += `tags:\n  - agentos\n  - agent-run\n`;
+        runMd += `---\n\n`;
+        runMd += `# Agent Session: ${r.agent}\n\n`;
+        runMd += `**Task:** ${r.task}\n`;
+        runMd += `**Outcome:** ${r.outcome || 'Success'}\n`;
+        runMd += `**Timestamp:** ${r.timestamp || ''}\n\n`;
+        runMd += `### Files Modified\n`;
+        (r.filesTouched || []).forEach(f => {
+            runMd += `- \`${f}\`\n`;
+        });
+        runMd += `\n### Execution Transcript\n\`\`\`\n${r.transcript || 'Agent executed successfully.'}\n\`\`\`\n\n`;
+        runMd += `---\nBack to [[INDEX|Knowledge Hub]]\n`;
+
+        fs.writeFileSync(path.join(runsDir, `${safeAgent}.md`), runMd, 'utf8');
+    });
+
+    fs.writeFileSync(path.join(vaultDir, 'INDEX.md'), indexMd, 'utf8');
+
+    // 2. Write Obsidian Graph View Preset Configuration
+    const graphPreset = {
+        "collapse-filter": false,
+        "search": "",
+        "showTags": true,
+        "showAttachments": false,
+        "hideUnresolved": false,
+        "showOrphans": true,
+        "collapse-color-groups": false,
+        "colorGroups": [
+            { "query": "tag:#memory", "color": { "a": 1, "rgb": 3200856 } },
+            { "query": "tag:#agent-run", "color": { "a": 1, "rgb": 689407 } },
+            { "query": "tag:#agentos", "color": { "a": 1, "rgb": 11504350 } }
+        ],
+        "collapse-display": false,
+        "showArrow": true,
+        "textFadeMultiplier": 0,
+        "nodeSizeMultiplier": 1.2,
+        "lineSizeMultiplier": 1,
+        "collapse-forces": false,
+        "centerStrength": 0.45,
+        "repelStrength": 12,
+        "linkStrength": 1,
+        "linkDistance": 160
+    };
+    fs.writeFileSync(path.join(obsidianConfigDir, 'graph.json'), JSON.stringify(graphPreset, null, 2), 'utf8');
+
+    return {
+        success: true,
+        vaultPath: vaultDir,
+        memoriesCount: (brain.memories || []).length,
+        runsCount: (brain.agentRuns || []).length,
+        notesCount: (brain.memories || []).length + (brain.agentRuns || []).length + 1
+    };
+}
+
 module.exports = {
     getTodos,
     updateTodo,
@@ -784,5 +1131,10 @@ module.exports = {
     createPlugin,
     getProjectBrain,
     addBrainMemory,
-    deleteBrainMemory
+    deleteBrainMemory,
+    getBrainGraph,
+    exportBrainObsidian,
+    getExternalBrainTools,
+    connectExternalBrainTool,
+    disconnectExternalBrainTool
 };

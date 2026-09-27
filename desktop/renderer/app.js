@@ -388,8 +388,118 @@ function initBrain() {
             const target = tab.getAttribute('data-tab');
             const content = document.getElementById(`brain-tab-${target}`);
             if (content) content.classList.add('active');
+
+            if (target === 'graph') {
+                setTimeout(() => initObsidianGraph(currentBrainProject), 50);
+            } else if (target === 'bridges') {
+                loadExternalBrainTools();
+            }
         });
     });
+
+    // Top action buttons
+    const btnExportObsidian = document.getElementById('btn-open-export-obsidian');
+    if (btnExportObsidian) {
+        btnExportObsidian.addEventListener('click', openExportObsidianModal);
+    }
+
+    const btnConnectTool = document.getElementById('btn-open-connect-tool');
+    if (btnConnectTool) {
+        btnConnectTool.addEventListener('click', openConnectToolModal);
+    }
+
+    const btnAddExtCard = document.getElementById('btn-add-external-tool-card');
+    if (btnAddExtCard) {
+        btnAddExtCard.addEventListener('click', openConnectToolModal);
+    }
+
+    const btnCloseExtModal = document.getElementById('btn-close-ext-tool-modal');
+    if (btnCloseExtModal) btnCloseExtModal.addEventListener('click', closeConnectToolModal);
+
+    const btnCancelExtModal = document.getElementById('btn-cancel-ext-tool-modal');
+    if (btnCancelExtModal) btnCancelExtModal.addEventListener('click', closeConnectToolModal);
+
+    const btnConfirmExt = document.getElementById('btn-confirm-connect-ext-tool');
+    if (btnConfirmExt) btnConfirmExt.addEventListener('click', handleConnectExternalTool);
+
+    // Export Obsidian Modal buttons
+    const btnCloseExpModal = document.getElementById('btn-close-export-obsidian-modal');
+    if (btnCloseExpModal) btnCloseExpModal.addEventListener('click', closeExportObsidianModal);
+
+    const btnCloseExpModal2 = document.getElementById('btn-close-export-modal');
+    if (btnCloseExpModal2) btnCloseExpModal2.addEventListener('click', closeExportObsidianModal);
+
+    const btnConfirmExp = document.getElementById('btn-confirm-export-obsidian');
+    if (btnConfirmExp) btnConfirmExp.addEventListener('click', handleExportObsidianVault);
+
+    // Graph Toolbar controls
+    const searchInput = document.getElementById('graph-search-input');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            graphSearchQuery = e.target.value.toLowerCase().trim();
+            if (graphSearchQuery) {
+                const match = graphNodes.find(n => n.label.toLowerCase().includes(graphSearchQuery));
+                if (match) {
+                    graphCamera.x = -match.x * graphCamera.zoom;
+                    graphCamera.y = -match.y * graphCamera.zoom;
+                    selectGraphNode(match);
+                }
+            }
+        });
+    }
+
+    const filterPills = document.querySelectorAll('.graph-filter-pill');
+    filterPills.forEach(pill => {
+        pill.addEventListener('click', () => {
+            filterPills.forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+            graphFilter = pill.getAttribute('data-filter') || 'all';
+        });
+    });
+
+    const btnTogglePhysics = document.getElementById('btn-toggle-graph-physics');
+    if (btnTogglePhysics) {
+        btnTogglePhysics.addEventListener('click', () => {
+            graphPhysicsRunning = !graphPhysicsRunning;
+            const icon = document.getElementById('physics-icon');
+            const label = document.getElementById('physics-label');
+            if (icon && label) {
+                icon.textContent = graphPhysicsRunning ? '⏸' : '▶';
+                label.textContent = graphPhysicsRunning ? 'Freeze' : 'Resume';
+            }
+            showToast(graphPhysicsRunning ? 'Graph physics resumed' : 'Graph physics paused');
+        });
+    }
+
+    const btnRecenter = document.getElementById('btn-recenter-graph');
+    if (btnRecenter) {
+        btnRecenter.addEventListener('click', () => {
+            graphCamera = { x: 0, y: 0, zoom: 1 };
+            showToast('Graph recentered');
+        });
+    }
+
+    const btnZoomIn = document.getElementById('btn-zoom-in');
+    if (btnZoomIn) {
+        btnZoomIn.addEventListener('click', () => {
+            graphCamera.zoom = Math.min(graphCamera.zoom * 1.25, 3.0);
+        });
+    }
+
+    const btnZoomOut = document.getElementById('btn-zoom-out');
+    if (btnZoomOut) {
+        btnZoomOut.addEventListener('click', () => {
+            graphCamera.zoom = Math.max(graphCamera.zoom / 1.25, 0.35);
+        });
+    }
+
+    const btnCloseInspector = document.getElementById('btn-close-inspector');
+    if (btnCloseInspector) {
+        btnCloseInspector.addEventListener('click', () => {
+            document.getElementById('graph-node-inspector').style.display = 'none';
+            graphSelectedNode = null;
+        });
+    }
 }
 
 function updateBrainProjectSelector(partitions) {
@@ -413,14 +523,25 @@ function updateBrainProjectSelector(partitions) {
     currentBrainProject = sel.value;
 }
 
-async function loadProjectBrain() {
+async function loadProjectBrain(projectName) {
     const sel = document.getElementById('brain-project-select');
-    if (!sel || !sel.value) return;
-    currentBrainProject = sel.value;
+    if (projectName) {
+        currentBrainProject = projectName;
+        if (sel) sel.value = projectName;
+    } else if (sel && sel.value) {
+        currentBrainProject = sel.value;
+    } else if (cachedPartitions && cachedPartitions.length > 0) {
+        updateBrainProjectSelector(cachedPartitions);
+        currentBrainProject = sel && sel.value ? sel.value : cachedPartitions[0].name;
+    } else {
+        currentBrainProject = 'space-bunny-web';
+    }
 
     try {
         const brain = await window.api.getProjectBrain(currentBrainProject);
         renderBrain(brain);
+        initObsidianGraph(currentBrainProject);
+        loadExternalBrainTools();
     } catch (err) {
         console.error('Failed to load project brain', err);
     }
@@ -430,15 +551,11 @@ function renderBrain(brain) {
     // Stats
     const memCount = brain.memories ? brain.memories.length : 0;
     const runCount = brain.agentRuns ? brain.agentRuns.length : 0;
-    const loc = brain.workStats ? brain.workStats.linesOfCode : 0;
-    const runtime = (brain.techStack && brain.techStack.runtime) ? brain.techStack.runtime : 'Standard';
 
     document.getElementById('brain-stat-memories').textContent = memCount;
     document.getElementById('brain-stat-runs').textContent = runCount;
-    document.getElementById('brain-stat-loc').textContent = loc;
-    document.getElementById('brain-stat-runtime').textContent = runtime;
 
-    // Tab 1: Memories
+    // Tab 2: Memories
     const memContainer = document.getElementById('brain-memories-container');
     memContainer.innerHTML = '';
     if (!brain.memories || brain.memories.length === 0) {
@@ -447,6 +564,7 @@ function renderBrain(brain) {
         brain.memories.forEach(m => {
             const card = document.createElement('div');
             card.className = 'memory-card';
+            card.id = `mem-card-${m.id}`;
             card.innerHTML = `
                 <div class="memory-header">
                     <span class="memory-title">${escapeHtml(m.title)}</span>
@@ -472,7 +590,7 @@ function renderBrain(brain) {
         });
     }
 
-    // Tab 2: Agent Runs Timeline
+    // Tab 3: Agent Runs Timeline
     const runsContainer = document.getElementById('brain-runs-container');
     runsContainer.innerHTML = '';
     if (!brain.agentRuns || brain.agentRuns.length === 0) {
@@ -481,6 +599,7 @@ function renderBrain(brain) {
         brain.agentRuns.forEach(r => {
             const card = document.createElement('div');
             card.className = 'run-card';
+            card.id = `run-card-${r.id}`;
 
             let filesHtml = '';
             if (r.filesTouched) {
@@ -503,7 +622,7 @@ function renderBrain(brain) {
         });
     }
 
-    // Tab 3: Tech Stack & System Directives
+    // Tab 4: Tech Stack & System Directives
     const techContainer = document.getElementById('brain-tech-container');
     const ts = brain.techStack || {};
     techContainer.innerHTML = `
@@ -524,6 +643,577 @@ function renderBrain(brain) {
             <span class="tech-spec-val">${escapeHtml(ts.modelBackend || 'Internal Bridge :8000 (Universal Free Models)')}</span>
         </div>
     `;
+}
+
+// =========================================================
+// Obsidian-Style Force-Directed Knowledge Graph Engine
+// =========================================================
+let graphNodes = [];
+let graphEdges = [];
+let graphAnimId = null;
+let graphPhysicsRunning = true;
+let graphFilter = 'all';
+let graphSearchQuery = '';
+let graphCamera = { x: 0, y: 0, zoom: 1 };
+let graphDragNode = null;
+let graphHoverNode = null;
+let graphSelectedNode = null;
+let graphIsPanning = false;
+let graphPanStart = { x: 0, y: 0 };
+let graphCanvas = null;
+let graphCtx = null;
+let graphInitializedEvents = false;
+
+async function initObsidianGraph(projectName) {
+    graphCanvas = document.getElementById('obsidian-graph-canvas');
+    if (!graphCanvas) return;
+    graphCtx = graphCanvas.getContext('2d');
+
+    // Resize canvas
+    const wrap = document.getElementById('graph-canvas-wrap');
+    if (!wrap) return;
+    const width = wrap.clientWidth || 900;
+    const height = wrap.clientHeight || 520;
+    const dpr = window.devicePixelRatio || 1;
+
+    graphCanvas.width = width * dpr;
+    graphCanvas.height = height * dpr;
+    graphCanvas.style.width = width + 'px';
+    graphCanvas.style.height = height + 'px';
+
+    // Fetch graph data from backend
+    try {
+        const data = await window.api.getBrainGraph(projectName || currentBrainProject);
+        if (!data || !data.nodes) return;
+
+        // Update stats badge
+        const chip = document.getElementById('graph-stats-chip');
+        if (chip) chip.textContent = `${data.nodes.length} Nodes • ${data.edges.length} Edges`;
+        const nodeStat = document.getElementById('brain-stat-graph-nodes');
+        if (nodeStat) nodeStat.textContent = data.nodes.length;
+
+        // Position nodes in a radial spiral around center
+        const existingMap = new Map(graphNodes.map(n => [n.id, n]));
+        graphNodes = data.nodes.map((n, idx) => {
+            const existing = existingMap.get(n.id);
+            if (existing) {
+                n.x = existing.x;
+                n.y = existing.y;
+                n.vx = existing.vx;
+                n.vy = existing.vy;
+            } else {
+                const angle = (idx / data.nodes.length) * Math.PI * 2;
+                const dist = n.type === 'root' ? 0 : 80 + (idx * 16);
+                n.x = Math.cos(angle) * dist + (Math.random() - 0.5) * 20;
+                n.y = Math.sin(angle) * dist + (Math.random() - 0.5) * 20;
+                n.vx = 0;
+                n.vy = 0;
+            }
+            n.pinned = false;
+            return n;
+        });
+
+        graphEdges = data.edges || [];
+    } catch (e) {
+        console.error('Failed to load brain graph:', e);
+    }
+
+    if (!graphInitializedEvents) {
+        setupGraphInteractions();
+        graphInitializedEvents = true;
+    }
+
+    if (graphAnimId) cancelAnimationFrame(graphAnimId);
+    startGraphSimulation();
+}
+
+function setupGraphInteractions() {
+    if (!graphCanvas) return;
+
+    graphCanvas.addEventListener('mousedown', (e) => {
+        const mouse = getCanvasMouse(e);
+        const clickedNode = findNodeAt(mouse.wx, mouse.wy);
+
+        if (clickedNode) {
+            graphDragNode = clickedNode;
+            graphDragNode.pinned = true;
+            selectGraphNode(clickedNode);
+        } else {
+            graphIsPanning = true;
+            graphPanStart = { x: e.clientX, y: e.clientY };
+        }
+    });
+
+    window.addEventListener('mousemove', (e) => {
+        if (!graphCanvas) return;
+        const mouse = getCanvasMouse(e);
+
+        if (graphDragNode) {
+            graphDragNode.x = mouse.wx;
+            graphDragNode.y = mouse.wy;
+            graphDragNode.vx = 0;
+            graphDragNode.vy = 0;
+        } else if (graphIsPanning) {
+            const dx = e.clientX - graphPanStart.x;
+            const dy = e.clientY - graphPanStart.y;
+            graphCamera.x += dx;
+            graphCamera.y += dy;
+            graphPanStart = { x: e.clientX, y: e.clientY };
+        } else {
+            // Hover detection
+            const hovered = findNodeAt(mouse.wx, mouse.wy);
+            if (hovered !== graphHoverNode) {
+                graphHoverNode = hovered;
+                graphCanvas.style.cursor = hovered ? 'pointer' : 'grab';
+            }
+        }
+    });
+
+    window.addEventListener('mouseup', () => {
+        if (graphDragNode) {
+            graphDragNode.pinned = false;
+            graphDragNode = null;
+        }
+        graphIsPanning = false;
+        if (graphCanvas) graphCanvas.style.cursor = 'grab';
+    });
+
+    graphCanvas.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
+        graphCamera.zoom = Math.min(Math.max(graphCamera.zoom * zoomFactor, 0.35), 3.0);
+    }, { passive: false });
+}
+
+function getCanvasMouse(e) {
+    const rect = graphCanvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    const mx = (e.clientX - rect.left);
+    const my = (e.clientY - rect.top);
+    const W = graphCanvas.width / dpr;
+    const H = graphCanvas.height / dpr;
+
+    const wx = (mx - W / 2 - graphCamera.x) / graphCamera.zoom;
+    const wy = (my - H / 2 - graphCamera.y) / graphCamera.zoom;
+    return { mx, my, wx, wy, W, H };
+}
+
+function findNodeAt(wx, wy) {
+    for (let i = graphNodes.length - 1; i >= 0; i--) {
+        const n = graphNodes[i];
+        if (graphFilter !== 'all' && n.type !== graphFilter && n.type !== 'root') continue;
+        const dx = wx - n.x;
+        const dy = wy - n.y;
+        const hitRadius = (n.radius || 12) + 6;
+        if (dx * dx + dy * dy <= hitRadius * hitRadius) {
+            return n;
+        }
+    }
+    return null;
+}
+
+function selectGraphNode(node) {
+    graphSelectedNode = node;
+    const inspector = document.getElementById('graph-node-inspector');
+    if (!inspector) return;
+
+    inspector.style.display = 'flex';
+    document.getElementById('inspector-title').textContent = node.label;
+    document.getElementById('inspector-badge').textContent = node.type.toUpperCase();
+    document.getElementById('inspector-badge').style.background = node.color || '#fff';
+    document.getElementById('inspector-category').textContent = node.category || '';
+    document.getElementById('inspector-desc').textContent = node.desc || node.content || 'Obsidian Knowledge Node';
+
+    // Find connected nodes
+    const linksList = document.getElementById('inspector-links-list');
+    linksList.innerHTML = '';
+    const connectedNodeIds = new Set();
+    graphEdges.forEach(e => {
+        if (e.source === node.id) connectedNodeIds.add(e.target);
+        if (e.target === node.id) connectedNodeIds.add(e.source);
+    });
+
+    connectedNodeIds.forEach(id => {
+        const neighbor = graphNodes.find(n => n.id === id);
+        if (neighbor) {
+            const chip = document.createElement('span');
+            chip.className = 'inspector-link-chip';
+            chip.textContent = neighbor.label;
+            chip.style.borderColor = neighbor.color || 'rgba(255,255,255,0.2)';
+            chip.style.cursor = 'pointer';
+            chip.addEventListener('click', () => selectGraphNode(neighbor));
+            linksList.appendChild(chip);
+        }
+    });
+
+    const actionBtn = document.getElementById('btn-inspector-action');
+    if (actionBtn) {
+        if (node.type === 'memory') {
+            actionBtn.textContent = 'View Memory Note';
+            actionBtn.onclick = () => {
+                document.querySelector('.brain-tab[data-tab="memories"]').click();
+                const card = document.getElementById(`mem-card-${node.id}`);
+                if (card) card.scrollIntoView({ behavior: 'smooth' });
+            };
+        } else if (node.type === 'agent') {
+            actionBtn.textContent = 'View Agent Run Transcript';
+            actionBtn.onclick = () => {
+                document.querySelector('.brain-tab[data-tab="history"]').click();
+                const card = document.getElementById(`run-card-${node.id}`);
+                if (card) card.scrollIntoView({ behavior: 'smooth' });
+            };
+        } else if (node.type === 'external') {
+            actionBtn.textContent = 'View External Bridges';
+            actionBtn.onclick = () => {
+                document.querySelector('.brain-tab[data-tab="bridges"]').click();
+            };
+        } else {
+            actionBtn.textContent = 'Copy Obsidian Wikilink';
+            actionBtn.onclick = () => {
+                navigator.clipboard.writeText(`[[${node.label}]]`);
+                showToast(`Copied '[[${node.label}]]' to clipboard!`);
+            };
+        }
+    }
+}
+
+function startGraphSimulation() {
+    function step() {
+        renderGraphFrame();
+        graphAnimId = requestAnimationFrame(step);
+    }
+    step();
+}
+
+function renderGraphFrame() {
+    if (!graphCanvas || !graphCtx) return;
+    const dpr = window.devicePixelRatio || 1;
+    const W = graphCanvas.width / dpr;
+    const H = graphCanvas.height / dpr;
+    const ctx = graphCtx;
+
+    // Physics step
+    if (graphPhysicsRunning) {
+        // 1. Repulsion between all nodes
+        for (let i = 0; i < graphNodes.length; i++) {
+            for (let j = i + 1; j < graphNodes.length; j++) {
+                const n1 = graphNodes[i];
+                const n2 = graphNodes[j];
+                let dx = n2.x - n1.x;
+                let dy = n2.y - n1.y;
+                let dist = Math.sqrt(dx * dx + dy * dy) || 1;
+                let force = 3600 / (dist * dist);
+                let fx = (dx / dist) * force;
+                let fy = (dy / dist) * force;
+
+                if (!n1.pinned) { n1.vx -= fx; n1.vy -= fy; }
+                if (!n2.pinned) { n2.vx += fx; n2.vy += fy; }
+            }
+        }
+
+        // 2. Hooke's spring attraction along edges
+        graphEdges.forEach(e => {
+            const source = graphNodes.find(n => n.id === e.source);
+            const target = graphNodes.find(n => n.id === e.target);
+            if (!source || !target) return;
+
+            let dx = target.x - source.x;
+            let dy = target.y - source.y;
+            let dist = Math.sqrt(dx * dx + dy * dy) || 1;
+            let restLength = 115;
+            let force = (dist - restLength) * 0.038;
+            let fx = (dx / dist) * force;
+            let fy = (dy / dist) * force;
+
+            if (!source.pinned) { source.vx += fx; source.vy += fy; }
+            if (!target.pinned) { target.vx -= fx; target.vy -= fy; }
+        });
+
+        // 3. Center gravity and damping
+        graphNodes.forEach(n => {
+            if (!n.pinned) {
+                n.vx -= n.x * 0.016;
+                n.vy -= n.y * 0.016;
+                n.vx *= 0.86;
+                n.vy *= 0.86;
+                n.x += n.vx;
+                n.y += n.vy;
+            }
+        });
+    }
+
+    // Clear Canvas
+    ctx.save();
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+
+    // Apply Camera Transform
+    ctx.translate(W / 2 + graphCamera.x, H / 2 + graphCamera.y);
+    ctx.scale(graphCamera.zoom, graphCamera.zoom);
+
+    // Determine highlighted connections if hover or selected
+    const activeHighlight = graphHoverNode || graphSelectedNode;
+    const connectedIds = new Set();
+    if (activeHighlight) {
+        connectedIds.add(activeHighlight.id);
+        graphEdges.forEach(e => {
+            if (e.source === activeHighlight.id) connectedIds.add(e.target);
+            if (e.target === activeHighlight.id) connectedIds.add(e.source);
+        });
+    }
+
+    // Draw Edges
+    graphEdges.forEach(e => {
+        const s = graphNodes.find(n => n.id === e.source);
+        const t = graphNodes.find(n => n.id === e.target);
+        if (!s || !t) return;
+
+        const isConnected = activeHighlight && (s.id === activeHighlight.id || t.id === activeHighlight.id);
+        const isDimmed = activeHighlight && !isConnected;
+
+        ctx.beginPath();
+        ctx.moveTo(s.x, s.y);
+        ctx.lineTo(t.x, t.y);
+
+        if (isConnected) {
+            ctx.strokeStyle = activeHighlight.color || '#ffffff';
+            ctx.lineWidth = 2.2;
+            ctx.globalAlpha = 0.85;
+        } else if (isDimmed) {
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+            ctx.lineWidth = 0.8;
+            ctx.globalAlpha = 0.2;
+        } else {
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.16)';
+            ctx.lineWidth = 1.2;
+            ctx.globalAlpha = 0.6;
+        }
+        ctx.stroke();
+
+        // Draw relationship tag on active edge
+        if (isConnected && e.relation) {
+            const midX = (s.x + t.x) / 2;
+            const midY = (s.y + t.y) / 2;
+            ctx.save();
+            ctx.font = '500 9px -apple-system, sans-serif';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.textAlign = 'center';
+            ctx.fillText(e.relation, midX, midY - 4);
+            ctx.restore();
+        }
+    });
+
+    ctx.globalAlpha = 1.0;
+
+    // Draw Nodes
+    graphNodes.forEach(n => {
+        const isFiltered = (graphFilter !== 'all' && n.type !== graphFilter && n.type !== 'root');
+        const isConnected = !activeHighlight || connectedIds.has(n.id);
+        const isHovered = (graphHoverNode && graphHoverNode.id === n.id);
+        const isSelected = (graphSelectedNode && graphSelectedNode.id === n.id);
+        const isSearchMatch = graphSearchQuery && n.label.toLowerCase().includes(graphSearchQuery);
+
+        ctx.save();
+        if (isFiltered) {
+            ctx.globalAlpha = 0.15;
+        } else if (!isConnected) {
+            ctx.globalAlpha = 0.22;
+        } else {
+            ctx.globalAlpha = 1.0;
+        }
+
+        const radius = n.radius || 12;
+
+        // Search Match or Hover Glow
+        if (isSearchMatch || isHovered || isSelected) {
+            ctx.beginPath();
+            ctx.arc(n.x, n.y, radius + 8, 0, Math.PI * 2);
+            ctx.fillStyle = isSearchMatch ? 'rgba(255, 214, 10, 0.25)' : (n.color ? n.color + '44' : 'rgba(255, 255, 255, 0.25)');
+            ctx.fill();
+        }
+
+        // Main Node Circle
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, radius, 0, Math.PI * 2);
+        ctx.fillStyle = n.color || '#af52de';
+        ctx.shadowColor = n.color || '#af52de';
+        ctx.shadowBlur = (isHovered || isSelected) ? 18 : 8;
+        ctx.fill();
+
+        ctx.shadowBlur = 0;
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = (isHovered || isSelected) ? 2.5 : 1.2;
+        ctx.stroke();
+
+        // Node Inner Core Dot
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, Math.max(radius * 0.35, 3), 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+
+        // Node Text Label
+        ctx.font = `${(isHovered || isSelected || n.type === 'root') ? '700' : '500'} 11px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.fillStyle = (isHovered || isSelected || n.type === 'root') ? '#ffffff' : 'rgba(255, 255, 255, 0.85)';
+        ctx.shadowColor = 'rgba(0,0,0,0.8)';
+        ctx.shadowBlur = 4;
+        ctx.fillText(n.label, n.x, n.y + radius + 14);
+
+        ctx.restore();
+    });
+
+    ctx.restore();
+}
+
+// =========================================================
+// External Second Brain Tools Management
+// =========================================================
+async function loadExternalBrainTools() {
+    const container = document.getElementById('external-tools-container');
+    if (!container) return;
+
+    try {
+        const tools = await window.api.getExternalBrainTools(currentBrainProject);
+        const countStat = document.getElementById('brain-stat-connected-tools');
+        if (countStat) countStat.textContent = tools.filter(t => t.status === 'connected' || t.status === 'active').length;
+
+        container.innerHTML = '';
+        tools.forEach(t => {
+            const card = document.createElement('div');
+            card.className = 'ext-tool-card';
+
+            const iconMap = {
+                obsidian: '💎',
+                logseq: '🌿',
+                foam: '🫧',
+                neo4j: '🕸️',
+                custom: '⚡'
+            };
+
+            card.innerHTML = `
+                <div class="ext-tool-header">
+                    <div class="ext-tool-icon-row">
+                        <div class="ext-tool-icon">${iconMap[t.type] || '🔌'}</div>
+                        <div class="ext-tool-title">
+                            <h4>${escapeHtml(t.name)}</h4>
+                            <span class="ext-tool-type">${escapeHtml(t.type.toUpperCase())} Integration</span>
+                        </div>
+                    </div>
+                    <span class="ext-tool-status ${t.status}">${t.status}</span>
+                </div>
+                <p class="ext-tool-desc">${escapeHtml(t.description)}</p>
+                <div class="ext-tool-endpoint">${escapeHtml(t.endpoint)}</div>
+                <div class="ext-tool-footer">
+                    <span class="ext-tool-mode">${escapeHtml(t.syncMode || 'Auto-Sync')}</span>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-secondary btn-sync-ext-tool" data-id="${t.id}" style="padding: 5px 12px; font-size: 0.75rem;">Sync Now</button>
+                        <button class="btn btn-secondary btn-del-ext-tool" data-id="${t.id}" style="padding: 5px 10px; font-size: 0.75rem; color: var(--accent-red);">&times;</button>
+                    </div>
+                </div>
+            `;
+
+            card.querySelector('.btn-sync-ext-tool').addEventListener('click', () => {
+                showToast(`Synchronized with ${t.name}!`);
+                initObsidianGraph(currentBrainProject);
+            });
+
+            card.querySelector('.btn-del-ext-tool').addEventListener('click', async () => {
+                if (confirm(`Disconnect '${t.name}'?`)) {
+                    await window.api.disconnectExternalBrainTool(currentBrainProject, t.id);
+                    showToast(`Disconnected ${t.name}`);
+                    loadExternalBrainTools();
+                    initObsidianGraph(currentBrainProject);
+                }
+            });
+
+            container.appendChild(card);
+        });
+    } catch (e) {
+        console.error('Failed to load external tools:', e);
+    }
+}
+
+function openConnectToolModal() {
+    document.getElementById('connect-external-tool-modal').classList.add('active');
+    document.getElementById('modal-ext-name').focus();
+}
+
+function closeConnectToolModal() {
+    document.getElementById('connect-external-tool-modal').classList.remove('active');
+    document.getElementById('modal-ext-name').value = '';
+    document.getElementById('modal-ext-endpoint').value = '';
+    document.getElementById('modal-ext-desc').value = '';
+}
+
+async function handleConnectExternalTool() {
+    const name = document.getElementById('modal-ext-name').value.trim();
+    const type = document.getElementById('modal-ext-type').value;
+    const endpoint = document.getElementById('modal-ext-endpoint').value.trim();
+    const syncMode = document.getElementById('modal-ext-sync').value;
+    const description = document.getElementById('modal-ext-desc').value.trim() || `Connected ${type.toUpperCase()} tool for partition ${currentBrainProject}`;
+
+    if (!name || !endpoint) {
+        showToast('Please provide tool name and endpoint / path');
+        return;
+    }
+
+    await window.api.connectExternalBrainTool(currentBrainProject, { name, type, endpoint, syncMode, description });
+    closeConnectToolModal();
+    showToast(`Connected '${name}' to Project Brain!`);
+    loadExternalBrainTools();
+    initObsidianGraph(currentBrainProject);
+}
+
+// =========================================================
+// Obsidian Vault Exporter
+// =========================================================
+let lastExportedVaultPath = '';
+
+function openExportObsidianModal() {
+    document.getElementById('export-obsidian-modal').classList.add('active');
+    const pathInput = document.getElementById('modal-export-path');
+    pathInput.value = `workspace/projects/${currentBrainProject}/.agentos/obsidian`;
+    document.getElementById('btn-open-vault-explorer').style.display = 'none';
+    document.getElementById('export-stats-preview').innerHTML = `
+        <span>Ready to compile all knowledge memories, agent runs, and graph.json preset for partition <strong>${currentBrainProject}</strong>.</span>
+    `;
+}
+
+function closeExportObsidianModal() {
+    document.getElementById('export-obsidian-modal').classList.remove('active');
+}
+
+async function handleExportObsidianVault() {
+    const btn = document.getElementById('btn-confirm-export-obsidian');
+    btn.disabled = true;
+    btn.innerText = 'Compiling Vault...';
+
+    try {
+        const res = await window.api.exportBrainObsidian(currentBrainProject);
+        btn.disabled = false;
+        btn.innerText = 'Re-Export Vault';
+
+        if (res.success) {
+            lastExportedVaultPath = res.vaultPath;
+            const preview = document.getElementById('export-stats-preview');
+            preview.innerHTML = `
+                <div style="color: var(--accent-green); font-weight: 700; margin-bottom: 6px;">✓ Obsidian Markdown Vault Compiled!</div>
+                <div>📁 <strong>Vault Path:</strong> <code style="color: #fff;">${escapeHtml(res.vaultPath)}</code></div>
+                <div style="margin-top: 6px;">📝 Generated <strong>${res.notesCount}</strong> Markdown notes with bidirectional <code style="color: #af52de;">[[wikilinks]]</code>, tags, and Obsidian graph presets.</div>
+            `;
+            const openBtn = document.getElementById('btn-open-vault-explorer');
+            openBtn.style.display = 'inline-flex';
+            openBtn.onclick = () => {
+                window.api.openExplorer(res.vaultPath);
+            };
+            showToast(`Obsidian Vault compiled successfully (${res.notesCount} notes)!`);
+        }
+    } catch (e) {
+        btn.disabled = false;
+        btn.innerText = 'Generate & Export Vault';
+        showToast('Failed to export Obsidian vault');
+        console.error(e);
+    }
 }
 
 function closeMemoryModal() {

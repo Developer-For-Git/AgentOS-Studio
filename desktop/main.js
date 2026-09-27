@@ -498,6 +498,26 @@ ipcMain.handle('delete-brain-memory', (event, { projectName, memoryId }) => {
     return store.deleteBrainMemory(projectName, memoryId);
 });
 
+ipcMain.handle('get-brain-graph', (event, projectName) => {
+    return store.getBrainGraph(projectName);
+});
+
+ipcMain.handle('export-brain-obsidian', (event, { projectName, targetDir }) => {
+    return store.exportBrainObsidian(projectName, targetDir);
+});
+
+ipcMain.handle('get-external-brain-tools', (event, projectName) => {
+    return store.getExternalBrainTools(projectName);
+});
+
+ipcMain.handle('connect-external-brain-tool', (event, { projectName, toolData }) => {
+    return store.connectExternalBrainTool(projectName, toolData);
+});
+
+ipcMain.handle('disconnect-external-brain-tool', (event, { projectName, toolId }) => {
+    return store.disconnectExternalBrainTool(projectName, toolId);
+});
+
 // --- Screenshot Capture IPC ---
 ipcMain.handle('capture-screen', async (event, filename) => {
     try {
