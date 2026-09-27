@@ -103,8 +103,7 @@ EOF
     echo "Partition '$name' successfully created at $target!"
     echo "  - Directory: $target"
     echo "  - Python Venv: $target/.venv"
-    echo "  - Git initialized"
-    echo "  - Synced to Windows host: C:\\Users\\LOL\\Desktop\\AIOS\\workspace\\projects\\$name"
+    echo "  - Synced to host workspace: /workspace/projects/$name"
 }
 
 function delete_partition() {

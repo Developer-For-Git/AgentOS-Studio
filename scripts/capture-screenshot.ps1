@@ -1,7 +1,7 @@
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
-$assetsDir = "c:\Users\LOL\Desktop\AIOS\assets"
+$assetsDir = Join-Path $PSScriptRoot "..\assets"
 if (-not (Test-Path $assetsDir)) {
     New-Item -ItemType Directory -Force -Path $assetsDir | Out-Null
 }

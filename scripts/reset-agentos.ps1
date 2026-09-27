@@ -57,7 +57,9 @@ default=agent
 $wslConf | wsl.exe -d AgentOS -u root -- sh -c "cat > /etc/wsl.conf"
 
 # Re-apply fstab
-wsl.exe -d AgentOS -u root -- sh -c "echo 'C:/Users/LOL/Desktop/AIOS/workspace /workspace drvfs rw,noatime,uid=1000,gid=1000,umask=022,fmode=0755,dmode=0755 0 0' > /etc/fstab"
+$workspaceDir = (Resolve-Path "$PSScriptRoot\..\workspace").Path
+$fstabEntry = "$($workspaceDir.Replace('\', '/')) /workspace drvfs rw,noatime,uid=1000,gid=1000,umask=022,fmode=0755,dmode=0755 0 0"
+wsl.exe -d AgentOS -u root -- sh -c "echo '$fstabEntry' > /etc/fstab"
 
 # Create agent user
 wsl.exe -d AgentOS -u root -- sh -c "useradd -m -s /bin/bash -G sudo agent && echo 'agent ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/agent && chmod 0440 /etc/sudoers.d/agent"

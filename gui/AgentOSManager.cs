@@ -105,7 +105,7 @@ namespace AgentOSManager
             else
             {
                 // Default fallback
-                appBaseDir = @"C:\Users\LOL\Desktop\AIOS";
+                appBaseDir = Directory.GetCurrentDirectory();
             }
 
             workspaceDir = Path.Combine(appBaseDir, "workspace");
@@ -685,7 +685,7 @@ namespace AgentOSManager
 
                 Label pStack = new Label
                 {
-                    Text = stack + "  •  Path: C:\\Users\\LOL\\Desktop\\AIOS\\workspace\\projects\\" + dirName,
+                    Text = stack + "  •  Path: " + Path.Combine(projectsDir, dirName),
                     Font = new Font("Segoe UI", 9f),
                     ForeColor = colorSubtext,
                     Location = new Point(18, 38),

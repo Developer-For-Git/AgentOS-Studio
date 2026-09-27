@@ -1,3 +1,5 @@
+Set FSO = CreateObject("Scripting.FileSystemObject")
+ScriptDir = FSO.GetParentFolderName(WScript.ScriptFullName)
 Set WshShell = CreateObject("WScript.Shell")
-WshShell.CurrentDirectory = "C:\Users\LOL\Desktop\AIOS\desktop"
+WshShell.CurrentDirectory = ScriptDir & "\desktop"
 WshShell.Run "cmd /c npm start", 0, False

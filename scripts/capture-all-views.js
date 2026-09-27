@@ -23,7 +23,7 @@ ipcMain.handle('get-system-status', async () => ({
 ipcMain.handle('get-partitions', async () => ([
     {
         name: "my-first-app",
-        path: "C:\\Users\\LOL\\Desktop\\AIOS\\workspace\\projects\\my-first-app",
+        path: path.join(aiosRoot, 'workspace', 'projects', 'my-first-app'),
         stack: "Python (venv) • Git",
         hasVenv: true,
         hasNode: false,
@@ -31,7 +31,7 @@ ipcMain.handle('get-partitions', async () => ([
     },
     {
         name: "space-bunny-web",
-        path: "C:\\Users\\LOL\\Desktop\\AIOS\\workspace\\projects\\space-bunny-web",
+        path: path.join(aiosRoot, 'workspace', 'projects', 'space-bunny-web'),
         stack: "Python • Node.js • Git",
         hasVenv: true,
         hasNode: true,

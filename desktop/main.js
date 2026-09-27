@@ -532,7 +532,7 @@ ipcMain.handle('capture-screen', async (event, filename) => {
         if (!mainWindow) return { success: false, error: 'No window' };
         const image = await mainWindow.webContents.capturePage();
         const fname = filename || 'screenshot_latest.png';
-        const targetPath = path.join('C:\\Users\\LOL\\.gemini\\antigravity\\brain\\82f95657-8a7c-405b-bed9-9a39070e539b', fname);
+        const targetPath = path.join(app.getPath('userData'), fname);
         fs.writeFileSync(targetPath, image.toPNG());
         return { success: true, path: targetPath };
     } catch (e) {
