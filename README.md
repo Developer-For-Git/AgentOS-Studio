@@ -2,27 +2,39 @@
 
 > **The Sandboxed Sub-Operating System & Apple-Polished Desktop Studio for Autonomous AI Coding Agents**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-orange.svg?style=flat-square)](LICENSE)
-[![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011-blue?style=flat-square&logo=windows)](https://microsoft.com/windows)
-[![Tech Stack](https://img.shields.io/badge/Stack-Electron%20v44%20%7C%20Ubuntu%2024.04%20LTS%20%7C%20WSL2-30d158?style=flat-square)](https://electronjs.org)
-[![Theme](https://img.shields.io/badge/Design-Apple%20iOS%20Dark%20Theme-ff9500?style=flat-square)](#-refined-apple-ios--macos-design)
-[![Security](https://img.shields.io/badge/Security-100%25%20Host%20Drive%20Isolated-10b981?style=flat-square)](#-the-zero-trust-security-firewall)
+<p align="center">
+  <img src="./assets/agentos-studio-dashboard.png" width="95%" alt="AgentOS Studio Dashboard" style="border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+</p>
+
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-orange.svg?style=flat-square" alt="License: MIT"></a>
+  <a href="https://microsoft.com/windows"><img src="https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011-blue?style=flat-square&logo=windows" alt="Platform"></a>
+  <a href="https://electronjs.org"><img src="https://img.shields.io/badge/Stack-Electron%20v44%20%7C%20Ubuntu%2024.04%20LTS%20%7C%20WSL2-30d158?style=flat-square" alt="Tech Stack"></a>
+  <a href="#-refined-apple-ios--macos-design"><img src="https://img.shields.io/badge/Design-Apple%20iOS%20Dark%20Theme-ff9500?style=flat-square" alt="Theme"></a>
+  <a href="#-the-zero-trust-security-firewall"><img src="https://img.shields.io/badge/Security-100%25%20Host%20Drive%20Isolated-10b981?style=flat-square" alt="Security"></a>
+</p>
 
 ---
 
-## 📸 Desktop Application Screenshots
+## 📸 Desktop Application Walkthrough
 
 ### 1. System Health & Security Dashboard
-*Apple iOS dark mode featuring organic dark oval background gradients, crisp white pill buttons, and Apple Action Orange CTA buttons.*
-![AgentOS Studio Dashboard](assets/agentos-studio-dashboard.png)
+Apple iOS dark theme featuring organic dark oval background depth, crisp white buttons, and the iconic Apple Action Orange CTA button.
+<p align="center">
+  <img src="./assets/agentos-studio-dashboard.png" width="92%" alt="System Dashboard">
+</p>
 
 ### 2. 1-Click Developer Tool Store
-*Install databases, cloud CLIs, and containers inside the sandbox with 1 click without installing bloatware on Windows.*
-![AgentOS Tool Store](assets/agentos-studio-tool-store.png)
+Install databases, cloud CLIs, and container engines directly into the isolated sandbox without polluting your Windows registry.
+<p align="center">
+  <img src="./assets/agentos-studio-tool-store.png" width="92%" alt="Tool Store">
+</p>
 
 ### 3. Console Runner & Sandbox Terminal
-*Execute commands as a standard user or with passwordless root (`sudo`) with quick preset chips.*
-![AgentOS Console Runner](assets/agentos-studio-console-runner.png)
+Execute commands as a standard user or with passwordless root (`sudo`) with instant preset chips.
+<p align="center">
+  <img src="./assets/agentos-studio-console-runner.png" width="92%" alt="Console Runner">
+</p>
 
 ---
 
@@ -46,42 +58,37 @@ Giving autonomous AI agents raw terminal access to your primary operating system
 ## 📊 Interactive System Architecture
 
 ```mermaid
-graph TD
+flowchart TD
     subgraph Host ["🖥️ Windows Primary Host"]
-        User["👤 Developer"]
-        Desktop["💻 Windows Desktop"]
+        direction TB
+        User["👤 Developer"] --> Studio["🍎 AgentOS Studio (Desktop UI)"]
+        Studio --> Desktop["💻 Windows Desktop"]
         VSCode["📝 Host VS Code / Cursor"]
-        Studio["🍎 AgentOS Studio (Electron UI)"]
     end
 
     subgraph Barrier ["🛡️ Zero-Trust Security Boundary"]
         direction TB
-        Blackout["🚫 Drive Blackout (C:\ & D:\ unmounted)"]
-        PathBlock["🚫 PATH Blackout (powershell.exe / cmd.exe stripped)"]
+        Blackout["🚫 Drive Blackout (C:\ unmounted)"]
+        PathBlock["🚫 PATH Blackout (powershell.exe blocked)"]
     end
 
-    subgraph SubOS ["🐧 AgentOS Virtual Sub-Operating System (Ubuntu 24.04 LTS)"]
+    subgraph SubOS ["🐧 AgentOS Sub-OS Sandbox (Ubuntu 24.04 LTS)"]
         direction TB
-        Kernel["⚙️ WSL2 Linux Hyper-V MicroVM"]
-        Bridge["⚡ Multi-Protocol Model Bridge (:8000)"]
-        Claude["🤖 Claude Code Agent"]
-        Aider["🤖 Aider CLI Agent"]
-        OpenCode["🤖 OpenCode CLI Agent"]
-        Store["📦 1-Click Tool Store (AWS, Postgres, Redis, Supabase)"]
-        Snapshots["📸 Instant State Snapshots & Rollback"]
+        Kernel["⚙️ WSL2 Hyper-V Linux MicroVM"]
+        Kernel --> Bridge["⚡ Multi-Protocol Model Bridge (:8000)"]
+        Bridge --> AgentBox["🤖 Autonomous Agents (Claude Code / Aider / OpenCode)"]
+        AgentBox --> Store["📦 1-Click Tool Store (Postgres / Redis / AWS / Supabase)"]
+        AgentBox --> Snapshots["📸 Instant Snapshots & Rollback"]
     end
 
     subgraph Gateway ["📂 Isolated Workspace Gateway"]
+        direction TB
         WorkPartition["📁 /workspace/projects (Synced to Host)"]
     end
 
-    User --> Studio
-    Studio --> Desktop
-    Studio -.->|IPC Diagnostics| Kernel
-    VSCode <==>|Direct File Edit| WorkPartition
     Studio ==> Barrier ==> SubOS
-    Claude & Aider & OpenCode -->|Create & Edit Code| WorkPartition
-    Claude & Aider -->|Inference via :8000| Bridge
+    VSCode <==>|Direct File Edit| WorkPartition
+    AgentBox -->|Execute & Code| WorkPartition
     Bridge -->|Free Models| Cloud["☁️ Free Reasoning Models (space-bunny-free)"]
 ```
 
