@@ -1,0 +1,39 @@
+# AgentOS Studio - Git Ignore
+# Exclude large virtual disk images, backups, and local runtimes
+
+distro/
+*.vhdx
+*.vhd
+
+backups/
+*.tar
+*.tar.gz
+*.tar.xz
+
+downloads/
+
+node_modules/
+.npm/
+
+# Environment and sensitive data
+.env
+.env.*
+*.key
+*.pem
+*.log
+
+# Python cache & virtualenvs
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Build artifacts
+desktop/dist/
+gui/bin/
+gui/obj/
+*.exe
+
+# User workspace project outputs
+workspace/projects/*/
+!workspace/projects/.gitkeep
