@@ -553,10 +553,11 @@
                         <div class="skills-tab-bar">
                             <button class="skills-tab active" id="tab-btn-installed" data-tab="installed">
                                 <span>Installed Skills</span>
-                                <span class="skills-tab-count" id="skills-installed-badge">10</span>
+                                <span class="skills-tab-count" id="skills-installed-badge">30</span>
                             </button>
                             <button class="skills-tab" id="tab-btn-skillsh" data-tab="skillsh">
                                 <span>🌐 skills.sh Registry</span>
+                                <span class="skills-tab-count" id="skills-registry-badge">24</span>
                             </button>
                         </div>
                         <div style="display: flex; gap: 12px; align-items: center; margin-left: auto;">
@@ -567,12 +568,43 @@
                                 </svg>
                                 <input type="text" id="skill-search" placeholder="Search skills, categories, or tool capabilities...">
                             </div>
+                            <button class="btn btn-secondary" id="btn-open-fetch-skill" title="Fetch skill directly from URL or skills.sh">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                <span>Fetch Skill</span>
+                            </button>
                             <button class="btn btn-primary" id="btn-open-create-skill">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <line x1="12" y1="5" x2="12" y2="19"></line>
                                     <line x1="5" y1="12" x2="19" y2="12"></line>
                                 </svg>
                                 <span>Create Custom Skill</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Skills Category Filter & Quick Switcher Bar -->
+                    <div class="skills-filter-toolbar">
+                        <div class="skills-cat-pills" id="skills-cat-pills">
+                            <button class="skill-cat-pill active" data-cat="all">All Skills (<span id="cat-count-all">0</span>)</button>
+                            <button class="skill-cat-pill" data-cat="Frontend">Frontend (<span id="cat-count-frontend">0</span>)</button>
+                            <button class="skill-cat-pill" data-cat="Backend">Backend & APIs (<span id="cat-count-backend">0</span>)</button>
+                            <button class="skill-cat-pill" data-cat="Testing">Testing & QA (<span id="cat-count-testing">0</span>)</button>
+                            <button class="skill-cat-pill" data-cat="Security">Security (<span id="cat-count-security">0</span>)</button>
+                            <button class="skill-cat-pill" data-cat="DevOps">DevOps & Cloud (<span id="cat-count-devops">0</span>)</button>
+                            <button class="skill-cat-pill" data-cat="Database">Database & RAG (<span id="cat-count-database">0</span>)</button>
+                            <button class="skill-cat-pill" data-cat="Architecture">Architecture (<span id="cat-count-architecture">0</span>)</button>
+                            <button class="skill-cat-pill" data-cat="Automation">Automation (<span id="cat-count-automation">0</span>)</button>
+                        </div>
+                        <div class="skills-batch-actions">
+                            <button class="btn-skills-action" id="btn-batch-enable-skills" title="Enable all currently filtered skills">
+                                <span>✓ Enable All</span>
+                            </button>
+                            <button class="btn-skills-action" id="btn-batch-disable-skills" title="Disable all currently filtered skills">
+                                <span>⊘ Disable All</span>
                             </button>
                         </div>
                     </div>
@@ -930,6 +962,41 @@
                 <button class="btn btn-secondary" id="btn-cancel-skill-modal">Cancel</button>
                 <button class="btn btn-primary" id="btn-confirm-create-skill">
                     <span>Save Skill</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Fetch Skill -->
+    <div class="modal-overlay" id="fetch-skill-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Fetch & Install Skill</h3>
+                <button class="modal-close-btn" id="btn-close-fetch-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.5;">
+                    Fetch any skill directly from <strong>skills.sh</strong>, a public Git repository URL, or raw package identifier.
+                </p>
+                <div class="form-group">
+                    <label>Skill Identifier or Repository URL</label>
+                    <input type="text" id="input-fetch-skill" class="form-input" placeholder="e.g. @skills-sh/ui or https://github.com/org/custom-skill">
+                </div>
+                <div class="fetch-presets-section" style="margin-top: 14px;">
+                    <span style="font-size: 0.74rem; color: var(--text-muted); display: block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Popular Skills to Fetch:</span>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        <button class="btn-preset-chip fetch-chip" data-val="@skills-sh/ui">shadcn/ui Component Forge</button>
+                        <button class="btn-preset-chip fetch-chip" data-val="@skills-sh/ai">Ollama Local LLM Bridge</button>
+                        <button class="btn-preset-chip fetch-chip" data-val="@skills-sh/orm">Drizzle ORM Engine</button>
+                        <button class="btn-preset-chip fetch-chip" data-val="@skills-sh/fullstack">tRPC Router</button>
+                        <button class="btn-preset-chip fetch-chip" data-val="@skills-sh/hono">Hono Framework</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-cancel-fetch-modal">Cancel</button>
+                <button class="btn btn-primary" id="btn-confirm-fetch-skill">
+                    <span>Fetch & Install</span>
                 </button>
             </div>
         </div>

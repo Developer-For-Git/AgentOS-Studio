@@ -31,6 +31,8 @@ contextBridge.exposeInMainWorld('api', {
     toggleSkill: (id, field, value) => ipcRenderer.invoke('toggle-skill', { id, field, value }),
     toggleSkillForProject: (skillId, projectName) => ipcRenderer.invoke('toggle-skill-for-project', { skillId, projectName }),
     createSkill: (skillData) => ipcRenderer.invoke('create-skill', skillData),
+    batchToggleSkills: (action, category) => ipcRenderer.invoke('batch-toggle-skills', { action, category }),
+    fetchCustomSkill: (input) => ipcRenderer.invoke('fetch-custom-skill', input),
 
     // Model Context Protocol (MCP)
     getMcpServers: () => ipcRenderer.invoke('get-mcp-servers'),

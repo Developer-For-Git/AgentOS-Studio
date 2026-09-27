@@ -1248,6 +1248,58 @@ let cachedSkills = [];
 let cachedSkillshRegistry = [];
 let currentSkillsTab = 'installed';
 
+let selectedSkillCategory = 'all';
+
+function matchesCategory(itemCategory, targetCategory) {
+    if (!targetCategory || targetCategory === 'all') return true;
+    const item = (itemCategory || '').toLowerCase();
+    const target = targetCategory.toLowerCase();
+    if (target === 'frontend') return item.includes('front') || item.includes('design') || item.includes('local');
+    if (target === 'backend') return item.includes('back') || item.includes('api') || item.includes('micro');
+    if (target === 'testing') return item.includes('test');
+    if (target === 'security') return item.includes('secur');
+    if (target === 'devops') return item.includes('devops') || item.includes('cloud') || item.includes('version');
+    if (target === 'database') return item.includes('data') || item.includes('rag') || item.includes('ai');
+    if (target === 'architecture') return item.includes('arch') || item.includes('refactor');
+    if (target === 'automation') return item.includes('auto') || item.includes('opt');
+    return item === target;
+}
+
+function updateSkillCategoryBadges() {
+    const list = currentSkillsTab === 'installed' ? cachedSkills : cachedSkillshRegistry;
+    const cats = ['all', 'frontend', 'backend', 'testing', 'security', 'devops', 'database', 'architecture', 'automation'];
+    cats.forEach(c => {
+        const el = document.getElementById(`cat-count-${c}`);
+        if (el) {
+            const count = list.filter(item => matchesCategory(item.category, c)).length;
+            el.textContent = count;
+        }
+    });
+}
+
+function applySkillsFilter() {
+    const searchVal = (document.getElementById('skill-search')?.value || '').toLowerCase().trim();
+    const list = currentSkillsTab === 'installed' ? cachedSkills : cachedSkillshRegistry;
+
+    const filtered = list.filter(item => {
+        const catMatch = matchesCategory(item.category, selectedSkillCategory);
+        if (!catMatch) return false;
+        if (!searchVal) return true;
+        const nameMatch = (item.name || '').toLowerCase().includes(searchVal);
+        const catTextMatch = (item.category || '').toLowerCase().includes(searchVal);
+        const descMatch = (item.description || '').toLowerCase().includes(searchVal);
+        const toolMatch = item.tools && item.tools.some(t => t.toLowerCase().includes(searchVal));
+        return nameMatch || catTextMatch || descMatch || toolMatch;
+    });
+
+    if (currentSkillsTab === 'installed') {
+        renderSkills(filtered);
+    } else {
+        renderSkillsShRegistry(filtered);
+    }
+    updateSkillCategoryBadges();
+}
+
 function initSkills() {
     loadSkills();
     loadSkillsSh();
@@ -1265,6 +1317,7 @@ function initSkills() {
             tabSkillsh.classList.remove('active');
             installedContainer.style.display = 'grid';
             skillshContainer.style.display = 'none';
+            applySkillsFilter();
         });
 
         tabSkillsh.addEventListener('click', () => {
@@ -1273,10 +1326,85 @@ function initSkills() {
             tabInstalled.classList.remove('active');
             installedContainer.style.display = 'none';
             skillshContainer.style.display = 'grid';
-            renderSkillsShRegistry(cachedSkillshRegistry);
+            applySkillsFilter();
         });
     }
 
+    // Category filter pills
+    document.querySelectorAll('.skill-cat-pill').forEach(pill => {
+        pill.addEventListener('click', () => {
+            document.querySelectorAll('.skill-cat-pill').forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+            selectedSkillCategory = pill.getAttribute('data-cat');
+            applySkillsFilter();
+        });
+    });
+
+    // Batch Enable / Disable
+    const btnBatchEnable = document.getElementById('btn-batch-enable-skills');
+    if (btnBatchEnable) {
+        btnBatchEnable.addEventListener('click', async () => {
+            await window.api.batchToggleSkills('enable-all', selectedSkillCategory);
+            showToast(`Enabled all skills in '${selectedSkillCategory}'`);
+            await loadSkills();
+        });
+    }
+
+    const btnBatchDisable = document.getElementById('btn-batch-disable-skills');
+    if (btnBatchDisable) {
+        btnBatchDisable.addEventListener('click', async () => {
+            await window.api.batchToggleSkills('disable-all', selectedSkillCategory);
+            showToast(`Disabled all skills in '${selectedSkillCategory}'`);
+            await loadSkills();
+        });
+    }
+
+    // Fetch Skill Modal
+    const btnOpenFetch = document.getElementById('btn-open-fetch-skill');
+    const modalFetch = document.getElementById('fetch-skill-modal');
+    if (btnOpenFetch && modalFetch) {
+        btnOpenFetch.addEventListener('click', () => {
+            modalFetch.classList.add('active');
+            document.getElementById('input-fetch-skill').focus();
+        });
+
+        const closeFetchModal = () => {
+            modalFetch.classList.remove('active');
+            document.getElementById('input-fetch-skill').value = '';
+        };
+
+        document.getElementById('btn-close-fetch-modal').addEventListener('click', closeFetchModal);
+        document.getElementById('btn-cancel-fetch-modal').addEventListener('click', closeFetchModal);
+
+        document.querySelectorAll('.fetch-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                document.getElementById('input-fetch-skill').value = chip.getAttribute('data-val');
+            });
+        });
+
+        document.getElementById('btn-confirm-fetch-skill').addEventListener('click', async () => {
+            const inputVal = document.getElementById('input-fetch-skill').value.trim();
+            if (!inputVal) {
+                showToast('Please provide a skill identifier or repository URL');
+                return;
+            }
+            const btn = document.getElementById('btn-confirm-fetch-skill');
+            btn.disabled = true;
+            btn.innerHTML = '<span>Fetching...</span>';
+            const res = await window.api.fetchCustomSkill(inputVal);
+            btn.disabled = false;
+            btn.innerHTML = '<span>Fetch & Install</span>';
+            if (res.success) {
+                closeFetchModal();
+                showToast(`Successfully fetched & installed '${res.skill ? res.skill.name : inputVal}'!`);
+                await loadSkills();
+            } else {
+                showToast(res.error || 'Failed to fetch skill');
+            }
+        });
+    }
+
+    // Create Custom Skill Modal
     document.getElementById('btn-open-create-skill').addEventListener('click', () => {
         document.getElementById('create-skill-modal').classList.add('active');
         document.getElementById('modal-skill-name').focus();
@@ -1286,22 +1414,8 @@ function initSkills() {
     document.getElementById('btn-cancel-skill-modal').addEventListener('click', closeSkillModal);
     document.getElementById('btn-confirm-create-skill').addEventListener('click', handleCreateSkill);
 
-    document.getElementById('skill-search').addEventListener('input', (e) => {
-        const query = e.target.value.toLowerCase();
-        if (currentSkillsTab === 'installed') {
-            renderSkills(cachedSkills.filter(s =>
-                s.name.toLowerCase().includes(query) ||
-                s.category.toLowerCase().includes(query) ||
-                (s.tools && s.tools.some(t => t.toLowerCase().includes(query)))
-            ));
-        } else {
-            renderSkillsShRegistry(cachedSkillshRegistry.filter(s =>
-                s.name.toLowerCase().includes(query) ||
-                s.category.toLowerCase().includes(query) ||
-                (s.tools && s.tools.some(t => t.toLowerCase().includes(query)))
-            ));
-        }
-    });
+    // Live search input
+    document.getElementById('skill-search').addEventListener('input', applySkillsFilter);
 }
 
 async function loadSkills() {
@@ -1311,7 +1425,7 @@ async function loadSkills() {
         document.getElementById('nav-skills-count').textContent = skills.length;
         const badge = document.getElementById('skills-installed-badge');
         if (badge) badge.textContent = skills.length;
-        renderSkills(skills);
+        applySkillsFilter();
     } catch (err) {
         console.error('Failed to load skills', err);
     }
@@ -1321,6 +1435,9 @@ async function loadSkillsSh() {
     try {
         const reg = await window.api.getSkillsShRegistry();
         cachedSkillshRegistry = reg || [];
+        const regBadge = document.getElementById('skills-registry-badge');
+        if (regBadge) regBadge.textContent = cachedSkillshRegistry.length;
+        updateSkillCategoryBadges();
     } catch (err) {
         console.error('Failed to load skills.sh registry', err);
     }

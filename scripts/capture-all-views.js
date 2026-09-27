@@ -50,6 +50,8 @@ ipcMain.handle('get-todos', () => store.getTodos());
 ipcMain.handle('get-skills', () => store.getSkills());
 ipcMain.handle('get-skills-sh-registry', () => store.getSkillsShRegistry());
 ipcMain.handle('install-skill-from-registry', (e, id) => store.installSkillFromRegistry(id));
+ipcMain.handle('batch-toggle-skills', (e, { action, category }) => store.batchToggleSkills(action, category));
+ipcMain.handle('fetch-custom-skill', (e, input) => store.fetchCustomSkill(input));
 ipcMain.handle('get-mcp-servers', () => store.getMcpServers());
 ipcMain.handle('get-plugins', () => store.getPlugins());
 ipcMain.handle('get-project-brain', (event, p) => store.getProjectBrain(p || 'space-bunny-web'));
@@ -106,7 +108,8 @@ app.whenReady().then(async () => {
     });
 
     await win.loadFile(path.join(desktopDir, 'renderer', 'index.html'));
-    await new Promise(r => setTimeout(r, 1500));
+    await win.webContents.insertCSS('* { animation: none !important; transition: none !important; }');
+    await new Promise(r => setTimeout(r, 1200));
 
     // Capture views
     const dashImg = await captureView(win, 'dashboard', 'view-dashboard.png');

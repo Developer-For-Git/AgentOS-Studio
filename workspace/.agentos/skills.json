@@ -150,5 +150,311 @@
     "assignedProjects": [
       "space-bunny-web"
     ]
+  },
+  {
+    "id": "nextjs-architect",
+    "name": "Next.js 15 & React Server Components",
+    "category": "Frontend",
+    "description": "Scaffolds React Server Components (RSC), App Router layouts, Server Actions, and incremental static generation with zero hydration mismatch.",
+    "tools": [
+      "next",
+      "react",
+      "typescript"
+    ],
+    "enabledGlobally": true,
+    "assignedProjects": [
+      "space-bunny-web"
+    ]
+  },
+  {
+    "id": "fastapi-pydantic",
+    "name": "FastAPI & Pydantic V2 Microservices",
+    "category": "Backend",
+    "description": "Builds high-throughput async REST microservices, Pydantic type validation models, lifespan events, and dependency injection.",
+    "tools": [
+      "fastapi",
+      "pydantic",
+      "uvicorn",
+      "httpx"
+    ],
+    "enabledGlobally": true,
+    "assignedProjects": [
+      "my-first-app"
+    ]
+  },
+  {
+    "id": "tailwind-tokens",
+    "name": "Tailwind CSS & Design Token Engine",
+    "category": "Frontend",
+    "description": "Configures theme tokens, typography scales, frosted liquid glass effects, and tree-shaken CSS rules conforming to Apple HIG.",
+    "tools": [
+      "tailwindcss",
+      "postcss",
+      "clsx"
+    ],
+    "enabledGlobally": true,
+    "assignedProjects": [
+      "space-bunny-web"
+    ]
+  },
+  {
+    "id": "graphql-nexus",
+    "name": "GraphQL Schema & Apollo Resolver Generator",
+    "category": "Architecture",
+    "description": "Constructs strongly-typed GraphQL schemas, Apollo Server resolvers, and DataLoader batching queries.",
+    "tools": [
+      "graphql-codegen",
+      "apollo-server",
+      "dataloader"
+    ],
+    "enabledGlobally": false,
+    "assignedProjects": [
+      "my-first-app"
+    ]
+  },
+  {
+    "id": "k8s-manifest",
+    "name": "Kubernetes Manifest & Helm Chart Builder",
+    "category": "DevOps",
+    "description": "Generates production Kubernetes manifests, Deployments, Services, Ingress, and parameterized Helm charts.",
+    "tools": [
+      "kubectl",
+      "helm",
+      "kubeval"
+    ],
+    "enabledGlobally": false,
+    "assignedProjects": [
+      "space-bunny-web"
+    ]
+  },
+  {
+    "id": "playwright-e2e",
+    "name": "Playwright E2E Visual Regression Tester",
+    "category": "Testing",
+    "description": "Runs visual regression comparisons, takes diff screenshots, and simulates complex user flows across web applications.",
+    "tools": [
+      "playwright",
+      "pixelmatch",
+      "axe-core"
+    ],
+    "enabledGlobally": true,
+    "assignedProjects": [
+      "space-bunny-web"
+    ]
+  },
+  {
+    "id": "i18n-localizer",
+    "name": "Multi-Language i18n Localizer",
+    "category": "Localization",
+    "description": "Extracts hardcoded UI strings into JSON localization dictionaries and auto-translates into 25+ target languages.",
+    "tools": [
+      "i18next",
+      "formatjs",
+      "gettext"
+    ],
+    "enabledGlobally": false,
+    "assignedProjects": [
+      "space-bunny-web"
+    ]
+  },
+  {
+    "id": "vector-rag",
+    "name": "Vector Database & RAG Pipeline Orchestrator",
+    "category": "AI & RAG",
+    "description": "Embeds codebase chunks into local vector indices (Chroma, Qdrant) with hybrid BM25 re-ranking for contextual retrieval.",
+    "tools": [
+      "chromadb",
+      "qdrant",
+      "langchain",
+      "embeddings"
+    ],
+    "enabledGlobally": true,
+    "assignedProjects": [
+      "space-bunny-web"
+    ]
+  },
+  {
+    "id": "websocket-realtime",
+    "name": "WebSocket & Real-Time Event Engine",
+    "category": "Backend",
+    "description": "Architects low-latency bi-directional WebSocket and Server-Sent Event (SSE) channels with Redis pub/sub backplanes.",
+    "tools": [
+      "socket.io",
+      "ws",
+      "redis-pubsub"
+    ],
+    "enabledGlobally": false,
+    "assignedProjects": [
+      "space-bunny-web"
+    ]
+  },
+  {
+    "id": "grpc-protobuf",
+    "name": "gRPC & Protocol Buffers Synthesizer",
+    "category": "Architecture",
+    "description": "Compiles proto3 schema definitions into idiomatic Python and TypeScript client/server stubs with binary serialization.",
+    "tools": [
+      "protoc",
+      "grpc-tools",
+      "buf"
+    ],
+    "enabledGlobally": false,
+    "assignedProjects": [
+      "my-first-app"
+    ]
+  },
+  {
+    "id": "a11y-wcag",
+    "name": "Web Accessibility (a11y) & WCAG 2.2 Auditor",
+    "category": "Frontend",
+    "description": "Audits semantic HTML, ARIA attributes, color contrast ratios, and keyboard navigability to satisfy WCAG 2.2 AAA guidelines.",
+    "tools": [
+      "axe-core",
+      "pa11y",
+      "lighthouse"
+    ],
+    "enabledGlobally": true,
+    "assignedProjects": [
+      "space-bunny-web"
+    ]
+  },
+  {
+    "id": "redis-caching",
+    "name": "Redis Cache & Distributed Locks Specialist",
+    "category": "Database",
+    "description": "Implements high-performance tiered caching, Redlock distributed locking patterns, and memory eviction strategies.",
+    "tools": [
+      "redis-cli",
+      "ioredis",
+      "redlock"
+    ],
+    "enabledGlobally": false,
+    "assignedProjects": [
+      "my-first-app"
+    ]
+  },
+  {
+    "id": "cicd-pipeline",
+    "name": "GitHub Actions & CI/CD Pipeline Synthesizer",
+    "category": "DevOps",
+    "description": "Generates multi-job matrix CI workflows with dependency caching, linter gates, and automated canary deployments.",
+    "tools": [
+      "gh-actions",
+      "act",
+      "yamllint"
+    ],
+    "enabledGlobally": true,
+    "assignedProjects": [
+      "my-first-app",
+      "space-bunny-web"
+    ]
+  },
+  {
+    "id": "cloudflare-workers",
+    "name": "Cloudflare Workers & Serverless Edge Deployer",
+    "category": "DevOps",
+    "description": "Packages edge compute functions, Cloudflare KV stores, D1 SQL bindings, and Wrangler deployment scripts.",
+    "tools": [
+      "wrangler",
+      "esbuild",
+      "miniflare"
+    ],
+    "enabledGlobally": false,
+    "assignedProjects": [
+      "space-bunny-web"
+    ]
+  },
+  {
+    "id": "data-pipeline",
+    "name": "Pandas & Polars High-Throughput ETL Pipeline",
+    "category": "Data Science",
+    "description": "Processes large tabular datasets using memory-efficient arrow-backed Polars expressions and vectorized transformations.",
+    "tools": [
+      "pandas",
+      "polars",
+      "pyarrow"
+    ],
+    "enabledGlobally": false,
+    "assignedProjects": [
+      "my-first-app"
+    ]
+  },
+  {
+    "id": "dependency-guard",
+    "name": "Supply Chain & Dependency Guard",
+    "category": "Security",
+    "description": "Scans software bill-of-materials (SBOM), detects malicious typosquatting packages, and pins cryptographic lockfiles.",
+    "tools": [
+      "osv-scanner",
+      "syft",
+      "cosign"
+    ],
+    "enabledGlobally": true,
+    "assignedProjects": [
+      "my-first-app",
+      "space-bunny-web"
+    ]
+  },
+  {
+    "id": "auth-security",
+    "name": "OAuth2, OIDC & JWT Auth Architect",
+    "category": "Security",
+    "description": "Implements PKCE authorization flows, cryptographic JWT signing, refresh token rotation, and RBAC permission guards.",
+    "tools": [
+      "keycloak",
+      "auth0",
+      "jose",
+      "passport"
+    ],
+    "enabledGlobally": true,
+    "assignedProjects": [
+      "space-bunny-web"
+    ]
+  },
+  {
+    "id": "api-mocking",
+    "name": "MSW & Pact Contract Testing Engine",
+    "category": "Testing",
+    "description": "Intercepts network requests via Mock Service Worker (MSW) and verifies consumer-driven microservice contracts with Pact.",
+    "tools": [
+      "msw",
+      "pact",
+      "supertest"
+    ],
+    "enabledGlobally": false,
+    "assignedProjects": [
+      "space-bunny-web"
+    ]
+  },
+  {
+    "id": "shell-automation",
+    "name": "Shell Scripting & PowerShell Automation Wizard",
+    "category": "Automation",
+    "description": "Authors robust Bash and PowerShell scripts with defensive error traps, cross-platform POSIX compatibility, and linting.",
+    "tools": [
+      "bash",
+      "powershell",
+      "shellcheck"
+    ],
+    "enabledGlobally": true,
+    "assignedProjects": [
+      "my-first-app",
+      "space-bunny-web"
+    ]
+  },
+  {
+    "id": "micro-frontend",
+    "name": "Micro-Frontend & Module Federation Composer",
+    "category": "Architecture",
+    "description": "Orchestrates decoupled frontend micro-apps with runtime remote script loading, shared state, and scoped CSS styles.",
+    "tools": [
+      "webpack-mf",
+      "vite-federation",
+      "single-spa"
+    ],
+    "enabledGlobally": false,
+    "assignedProjects": [
+      "space-bunny-web"
+    ]
   }
 ]

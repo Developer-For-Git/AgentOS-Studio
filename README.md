@@ -137,8 +137,11 @@ Connect with Obsidian, Logseq, Neo4j, or open-source graph visualizers and webho
   <img src="./assets/agentos-studio-brain-bridges.png" width="92%" alt="External Second Brain Bridges">
 </p>
 
-### 5. Autonomous Agent Skills Hub & skills.sh Live Registry
-Enable verified development capabilities (Refactoring, AST transformations, Security scanning, Playwright E2E) and install community skills from skills.sh with 1 click.
+### 5. Autonomous Agent Skills Suite & skills.sh Live Registry
+Equip agents with **30+ verified development skills** across 9 domains (Frontend, Backend, Testing, Security, DevOps, Database & RAG, Architecture, Automation) plus **24+ community skills** via the live `skills.sh` registry:
+- **Interactive Category Switching:** 9 category pills (`Frontend`, `Backend`, `Testing`, `Security`, `DevOps`, `Database`, `Architecture`, `Automation`) with live item counts for instant switching.
+- **Direct Skill Fetcher:** Click **Fetch Skill** to import custom skills from any URL, Git repository (`https://github.com/...`), or package identifier (`@skills-sh/...`).
+- **Batch Authorization Controls:** 1-click `✓ Enable All` and `⊘ Disable All` per category with granular per-project authorization chips.
 <p align="center">
   <img src="./assets/agentos-studio-skills.png" width="92%" alt="Autonomous Agent Skills">
 </p>

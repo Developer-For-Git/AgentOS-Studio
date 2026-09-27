@@ -80,7 +80,7 @@ const DEFAULT_TODOS = [
 const DEFAULT_SKILLS = [
     {
         id: "code-refactor",
-        name: "Code Modernizer & Refactor",
+        name: "Code Modernizer & AST Refactor",
         category: "Refactoring",
         description: "Refactors legacy patterns, eliminates technical debt, migrates promises to async/await, and enforces clean modular code.",
         tools: ["ast-grep", "prettier", "git-diff"],
@@ -167,16 +167,197 @@ const DEFAULT_SKILLS = [
         tools: ["clinicjs", "py-spy", "webpack-bundle-analyzer"],
         enabledGlobally: false,
         assignedProjects: ["space-bunny-web"]
+    },
+    {
+        id: "nextjs-architect",
+        name: "Next.js 15 & React Server Components",
+        category: "Frontend",
+        description: "Scaffolds React Server Components (RSC), App Router layouts, Server Actions, and incremental static generation with zero hydration mismatch.",
+        tools: ["next", "react", "typescript"],
+        enabledGlobally: true,
+        assignedProjects: ["space-bunny-web"]
+    },
+    {
+        id: "fastapi-pydantic",
+        name: "FastAPI & Pydantic V2 Microservices",
+        category: "Backend",
+        description: "Builds high-throughput async REST microservices, Pydantic type validation models, lifespan events, and dependency injection.",
+        tools: ["fastapi", "pydantic", "uvicorn", "httpx"],
+        enabledGlobally: true,
+        assignedProjects: ["my-first-app"]
+    },
+    {
+        id: "tailwind-tokens",
+        name: "Tailwind CSS & Design Token Engine",
+        category: "Frontend",
+        description: "Configures theme tokens, typography scales, frosted liquid glass effects, and tree-shaken CSS rules conforming to Apple HIG.",
+        tools: ["tailwindcss", "postcss", "clsx"],
+        enabledGlobally: true,
+        assignedProjects: ["space-bunny-web"]
+    },
+    {
+        id: "graphql-nexus",
+        name: "GraphQL Schema & Apollo Resolver Generator",
+        category: "Architecture",
+        description: "Constructs strongly-typed GraphQL schemas, Apollo Server resolvers, and DataLoader batching queries.",
+        tools: ["graphql-codegen", "apollo-server", "dataloader"],
+        enabledGlobally: false,
+        assignedProjects: ["my-first-app"]
+    },
+    {
+        id: "k8s-manifest",
+        name: "Kubernetes Manifest & Helm Chart Builder",
+        category: "DevOps",
+        description: "Generates production Kubernetes manifests, Deployments, Services, Ingress, and parameterized Helm charts.",
+        tools: ["kubectl", "helm", "kubeval"],
+        enabledGlobally: false,
+        assignedProjects: ["space-bunny-web"]
+    },
+    {
+        id: "playwright-e2e",
+        name: "Playwright E2E Visual Regression Tester",
+        category: "Testing",
+        description: "Runs visual regression comparisons, takes diff screenshots, and simulates complex user flows across web applications.",
+        tools: ["playwright", "pixelmatch", "axe-core"],
+        enabledGlobally: true,
+        assignedProjects: ["space-bunny-web"]
+    },
+    {
+        id: "i18n-localizer",
+        name: "Multi-Language i18n Localizer",
+        category: "Localization",
+        description: "Extracts hardcoded UI strings into JSON localization dictionaries and auto-translates into 25+ target languages.",
+        tools: ["i18next", "formatjs", "gettext"],
+        enabledGlobally: false,
+        assignedProjects: ["space-bunny-web"]
+    },
+    {
+        id: "vector-rag",
+        name: "Vector Database & RAG Pipeline Orchestrator",
+        category: "AI & RAG",
+        description: "Embeds codebase chunks into local vector indices (Chroma, Qdrant) with hybrid BM25 re-ranking for contextual retrieval.",
+        tools: ["chromadb", "qdrant", "langchain", "embeddings"],
+        enabledGlobally: true,
+        assignedProjects: ["space-bunny-web"]
+    },
+    {
+        id: "websocket-realtime",
+        name: "WebSocket & Real-Time Event Engine",
+        category: "Backend",
+        description: "Architects low-latency bi-directional WebSocket and Server-Sent Event (SSE) channels with Redis pub/sub backplanes.",
+        tools: ["socket.io", "ws", "redis-pubsub"],
+        enabledGlobally: false,
+        assignedProjects: ["space-bunny-web"]
+    },
+    {
+        id: "grpc-protobuf",
+        name: "gRPC & Protocol Buffers Synthesizer",
+        category: "Architecture",
+        description: "Compiles proto3 schema definitions into idiomatic Python and TypeScript client/server stubs with binary serialization.",
+        tools: ["protoc", "grpc-tools", "buf"],
+        enabledGlobally: false,
+        assignedProjects: ["my-first-app"]
+    },
+    {
+        id: "a11y-wcag",
+        name: "Web Accessibility (a11y) & WCAG 2.2 Auditor",
+        category: "Frontend",
+        description: "Audits semantic HTML, ARIA attributes, color contrast ratios, and keyboard navigability to satisfy WCAG 2.2 AAA guidelines.",
+        tools: ["axe-core", "pa11y", "lighthouse"],
+        enabledGlobally: true,
+        assignedProjects: ["space-bunny-web"]
+    },
+    {
+        id: "redis-caching",
+        name: "Redis Cache & Distributed Locks Specialist",
+        category: "Database",
+        description: "Implements high-performance tiered caching, Redlock distributed locking patterns, and memory eviction strategies.",
+        tools: ["redis-cli", "ioredis", "redlock"],
+        enabledGlobally: false,
+        assignedProjects: ["my-first-app"]
+    },
+    {
+        id: "cicd-pipeline",
+        name: "GitHub Actions & CI/CD Pipeline Synthesizer",
+        category: "DevOps",
+        description: "Generates multi-job matrix CI workflows with dependency caching, linter gates, and automated canary deployments.",
+        tools: ["gh-actions", "act", "yamllint"],
+        enabledGlobally: true,
+        assignedProjects: ["my-first-app", "space-bunny-web"]
+    },
+    {
+        id: "cloudflare-workers",
+        name: "Cloudflare Workers & Serverless Edge Deployer",
+        category: "DevOps",
+        description: "Packages edge compute functions, Cloudflare KV stores, D1 SQL bindings, and Wrangler deployment scripts.",
+        tools: ["wrangler", "esbuild", "miniflare"],
+        enabledGlobally: false,
+        assignedProjects: ["space-bunny-web"]
+    },
+    {
+        id: "data-pipeline",
+        name: "Pandas & Polars High-Throughput ETL Pipeline",
+        category: "Data Science",
+        description: "Processes large tabular datasets using memory-efficient arrow-backed Polars expressions and vectorized transformations.",
+        tools: ["pandas", "polars", "pyarrow"],
+        enabledGlobally: false,
+        assignedProjects: ["my-first-app"]
+    },
+    {
+        id: "dependency-guard",
+        name: "Supply Chain & Dependency Guard",
+        category: "Security",
+        description: "Scans software bill-of-materials (SBOM), detects malicious typosquatting packages, and pins cryptographic lockfiles.",
+        tools: ["osv-scanner", "syft", "cosign"],
+        enabledGlobally: true,
+        assignedProjects: ["my-first-app", "space-bunny-web"]
+    },
+    {
+        id: "auth-security",
+        name: "OAuth2, OIDC & JWT Auth Architect",
+        category: "Security",
+        description: "Implements PKCE authorization flows, cryptographic JWT signing, refresh token rotation, and RBAC permission guards.",
+        tools: ["keycloak", "auth0", "jose", "passport"],
+        enabledGlobally: true,
+        assignedProjects: ["space-bunny-web"]
+    },
+    {
+        id: "api-mocking",
+        name: "MSW & Pact Contract Testing Engine",
+        category: "Testing",
+        description: "Intercepts network requests via Mock Service Worker (MSW) and verifies consumer-driven microservice contracts with Pact.",
+        tools: ["msw", "pact", "supertest"],
+        enabledGlobally: false,
+        assignedProjects: ["space-bunny-web"]
+    },
+    {
+        id: "shell-automation",
+        name: "Shell Scripting & PowerShell Automation Wizard",
+        category: "Automation",
+        description: "Authors robust Bash and PowerShell scripts with defensive error traps, cross-platform POSIX compatibility, and linting.",
+        tools: ["bash", "powershell", "shellcheck"],
+        enabledGlobally: true,
+        assignedProjects: ["my-first-app", "space-bunny-web"]
+    },
+    {
+        id: "micro-frontend",
+        name: "Micro-Frontend & Module Federation Composer",
+        category: "Architecture",
+        description: "Orchestrates decoupled frontend micro-apps with runtime remote script loading, shared state, and scoped CSS styles.",
+        tools: ["webpack-mf", "vite-federation", "single-spa"],
+        enabledGlobally: false,
+        assignedProjects: ["space-bunny-web"]
     }
 ];
 
-// skills.sh Community Registry Catalog
+// skills.sh Community Registry Catalog (24+ Community Skills)
 const SKILLS_SH_REGISTRY = [
     {
         id: "skillsh-browser-tester",
         name: "Playwright E2E Visual Regression Tester",
         author: "@skills-sh/testing",
         downloads: "42.8k",
+        stars: "1.8k",
         category: "Testing",
         description: "Runs visual regression comparisons, takes diff screenshots, and simulates complex user flows across web applications.",
         tools: ["playwright", "pixelmatch", "axe-core"]
@@ -186,6 +367,7 @@ const SKILLS_SH_REGISTRY = [
         name: "Multi-Language i18n Localizer",
         author: "@skills-sh/intl",
         downloads: "18.3k",
+        stars: "920",
         category: "Localization",
         description: "Extracts hardcoded UI strings into JSON localization dictionaries and auto-translates into 25+ target languages.",
         tools: ["i18next", "formatjs", "gettext"]
@@ -195,16 +377,18 @@ const SKILLS_SH_REGISTRY = [
         name: "GraphQL Schema & Resolver Generator",
         author: "@skills-sh/api",
         downloads: "31.2k",
+        stars: "1.4k",
         category: "Architecture",
         description: "Constructs strongly-typed GraphQL schemas, Apollo Server resolvers, and DataLoader batching queries.",
-        tools: ["graphql-codegen", "apollo-server"]
+        tools: ["graphql-codegen", "apollo-server", "dataloader"]
     },
     {
         id: "skillsh-tailwind-styler",
         name: "Tailwind CSS & Design Token Engine",
         author: "@skills-sh/design",
         downloads: "64.1k",
-        category: "Design",
+        stars: "3.2k",
+        category: "Frontend",
         description: "Generates responsive, accessible Tailwind components, manages color tokens, and purges unused utility classes.",
         tools: ["tailwindcss", "postcss", "clsx"]
     },
@@ -213,9 +397,200 @@ const SKILLS_SH_REGISTRY = [
         name: "Kubernetes Manifest & Helm Chart Builder",
         author: "@skills-sh/cloud",
         downloads: "24.5k",
+        stars: "1.1k",
         category: "DevOps",
         description: "Generates production Kubernetes manifests, Deployments, Services, Ingress, and parameterized Helm charts.",
         tools: ["kubectl", "helm", "kubeval"]
+    },
+    {
+        id: "skillsh-astro-docs",
+        name: "Astro Starlight Documentation & Blog Engine",
+        author: "@skills-sh/astro",
+        downloads: "38.6k",
+        stars: "2.1k",
+        category: "Frontend",
+        description: "Generates lightning-fast static documentation sites, RSS feeds, and content collections using Astro and Starlight.",
+        tools: ["astro", "starlight", "mdx"]
+    },
+    {
+        id: "skillsh-svelte5-runes",
+        name: "Svelte 5 Runes & Reactive Stores Specialist",
+        author: "@skills-sh/svelte",
+        downloads: "27.9k",
+        stars: "1.5k",
+        category: "Frontend",
+        description: "Architects modern Svelte 5 web apps with universal reactive runes ($state, $derived, $effect) and SvelteKit endpoints.",
+        tools: ["svelte", "sveltekit", "vite"]
+    },
+    {
+        id: "skillsh-rust-wasm",
+        name: "Rust WebAssembly (Wasm) Micro-Modules",
+        author: "@skills-sh/rust",
+        downloads: "21.4k",
+        stars: "1.9k",
+        category: "Architecture",
+        description: "Compiles compute-heavy Rust functions into high-performance Wasm binaries for instant execution inside browsers.",
+        tools: ["cargo", "wasm-pack", "wasm-bindgen"]
+    },
+    {
+        id: "skillsh-solidity-audit",
+        name: "EVM & Solidity Smart Contract Auditor",
+        author: "@skills-sh/web3",
+        downloads: "19.8k",
+        stars: "1.3k",
+        category: "Security",
+        description: "Detects reentrancy vulnerabilities, gas consumption hotspots, and unchecked math operations across Solidity contracts.",
+        tools: ["slither", "foundry", "solc"]
+    },
+    {
+        id: "skillsh-stripe-billing",
+        name: "Stripe Subscriptions & Webhook Handler",
+        author: "@skills-sh/billing",
+        downloads: "33.7k",
+        stars: "1.7k",
+        category: "Backend",
+        description: "Integrates secure Stripe checkout sessions, usage-based metered billing, customer portal links, and idempotent webhooks.",
+        tools: ["stripe-cli", "stripe-node", "micro"]
+    },
+    {
+        id: "skillsh-shadcn-ui",
+        name: "shadcn/ui & Radix Primitive Component Forge",
+        author: "@skills-sh/ui",
+        downloads: "89.2k",
+        stars: "4.8k",
+        category: "Frontend",
+        description: "Generates accessible, highly customizable copy-paste React components styled with Tailwind CSS and Radix primitives.",
+        tools: ["shadcn", "radix-ui", "lucide-react"]
+    },
+    {
+        id: "skillsh-ollama-bridge",
+        name: "Local LLM Ollama & vLLM Inference Connector",
+        author: "@skills-sh/ai",
+        downloads: "56.4k",
+        stars: "3.6k",
+        category: "AI & RAG",
+        description: "Connects AgentOS partitions to local open-weights reasoning models running via Ollama or vLLM with zero cloud leakage.",
+        tools: ["ollama", "curl", "openai-sdk"]
+    },
+    {
+        id: "skillsh-supabase-edge",
+        name: "Supabase Database & Edge Functions Integrator",
+        author: "@skills-sh/supabase",
+        downloads: "44.1k",
+        stars: "2.3k",
+        category: "Database",
+        description: "Configures PostgreSQL row-level security (RLS), realtime subscriptions, Auth helpers, and Deno edge functions.",
+        tools: ["supabase-cli", "deno", "postgrest"]
+    },
+    {
+        id: "skillsh-terraform-aws",
+        name: "Terraform Multi-Cloud Infrastructure Blueprint",
+        author: "@skills-sh/infra",
+        downloads: "29.8k",
+        stars: "1.6k",
+        category: "DevOps",
+        description: "Authors reusable Terraform modules with state locking, automated plans, and multi-region failover configurations.",
+        tools: ["terraform", "tflint", "checkov"]
+    },
+    {
+        id: "skillsh-zod-validator",
+        name: "Zod & Pydantic Type Contract Synchronizer",
+        author: "@skills-sh/schema",
+        downloads: "51.3k",
+        stars: "2.8k",
+        category: "Architecture",
+        description: "Synchronizes TypeScript Zod schemas and Python Pydantic models to guarantee zero type divergence across fullstack apps.",
+        tools: ["zod", "pydantic", "json-schema-to-ts"]
+    },
+    {
+        id: "skillsh-duckdb-analytics",
+        name: "DuckDB In-Process Analytical Engine",
+        author: "@skills-sh/analytics",
+        downloads: "22.0k",
+        stars: "1.2k",
+        category: "Data Science",
+        description: "Queries large Parquet and CSV files in milliseconds directly within Python/Node without running a database server.",
+        tools: ["duckdb", "parquet-tools", "sql"]
+    },
+    {
+        id: "skillsh-trpc-fullstack",
+        name: "tRPC End-to-End Type-Safe Procedure Router",
+        author: "@skills-sh/fullstack",
+        downloads: "47.5k",
+        stars: "2.7k",
+        category: "Backend",
+        description: "Creates end-to-end typesafe API procedures without code generation or runtime schema duplication.",
+        tools: ["trpc", "zod", "react-query"]
+    },
+    {
+        id: "skillsh-kafka-streaming",
+        name: "Apache Kafka & Redpanda Event Streaming Client",
+        author: "@skills-sh/streaming",
+        downloads: "26.3k",
+        stars: "1.4k",
+        category: "Backend",
+        description: "Sets up high-throughput event consumers, producer batches, Avro schema registries, and dead-letter queues.",
+        tools: ["kafkajs", "redpanda", "avro"]
+    },
+    {
+        id: "skillsh-clickhouse-olap",
+        name: "ClickHouse High-Throughput Columnar OLAP",
+        author: "@skills-sh/database",
+        downloads: "17.8k",
+        stars: "1.1k",
+        category: "Database",
+        description: "Designs ultra-fast analytical schemas, materialized views, and time-series aggregations for event telemetry.",
+        tools: ["clickhouse-client", "clickhouse-driver"]
+    },
+    {
+        id: "skillsh-electron-forge",
+        name: "Cross-Platform Desktop App Packager",
+        author: "@skills-sh/desktop",
+        downloads: "36.2k",
+        stars: "2.0k",
+        category: "Frontend",
+        description: "Packages desktop applications into Windows installers (NSIS), macOS DMGs, and Linux AppImages with code signing.",
+        tools: ["electron-forge", "electron-builder"]
+    },
+    {
+        id: "skillsh-ffmpeg-media",
+        name: "FFmpeg Video & Audio Transcoding Pipeline",
+        author: "@skills-sh/media",
+        downloads: "28.4k",
+        stars: "1.5k",
+        category: "Automation",
+        description: "Automates video compression, audio normalization, thumbnail generation, and HLS streaming segment packaging.",
+        tools: ["ffmpeg", "ffprobe", "fluent-ffmpeg"]
+    },
+    {
+        id: "skillsh-regex-wizard",
+        name: "Regex & Grammar Pattern Matcher",
+        author: "@skills-sh/regex",
+        downloads: "39.1k",
+        stars: "2.2k",
+        category: "Automation",
+        description: "Synthesizes complex regular expressions and AST parser expressions with automated catastrophic backtracking guards.",
+        tools: ["regex-gen", "safe-regex", "nearley"]
+    },
+    {
+        id: "skillsh-hono-edge",
+        name: "Hono Ultra-Fast Multi-Runtime Web Framework",
+        author: "@skills-sh/hono",
+        downloads: "41.7k",
+        stars: "2.5k",
+        category: "Backend",
+        description: "Constructs tiny, ultra-fast web endpoints designed to run anywhere: Cloudflare Workers, Node.js, Deno, or Bun.",
+        tools: ["hono", "zod-validator"]
+    },
+    {
+        id: "skillsh-drizzle-orm",
+        name: "Drizzle ORM Lightweight SQL Engine",
+        author: "@skills-sh/orm",
+        downloads: "58.9k",
+        stars: "3.4k",
+        category: "Database",
+        description: "TypeScript ORM with zero overhead, automatic SQL migrations, and maximum query execution performance.",
+        tools: ["drizzle-orm", "drizzle-kit", "postgres"]
     }
 ];
 
@@ -458,7 +833,69 @@ function updateTodo(id, updates) {
 
 // --- Skills Operations ---
 function getSkills() {
-    return readJson(skillsFile, DEFAULT_SKILLS);
+    const existing = readJson(skillsFile, []);
+    if (!existing || existing.length === 0) {
+        writeJson(skillsFile, DEFAULT_SKILLS);
+        return DEFAULT_SKILLS;
+    }
+    const existingIds = new Set(existing.map(s => s.id));
+    let hasNew = false;
+    DEFAULT_SKILLS.forEach(ds => {
+        if (!existingIds.has(ds.id)) {
+            existing.push(ds);
+            hasNew = true;
+        }
+    });
+    if (hasNew) {
+        writeJson(skillsFile, existing);
+    }
+    return existing;
+}
+
+function batchToggleSkills(action, category) {
+    const skills = getSkills();
+    const enable = action === 'enable-all';
+    skills.forEach(s => {
+        if (!category || category === 'all' || s.category.toLowerCase() === category.toLowerCase()) {
+            s.enabledGlobally = enable;
+        }
+    });
+    writeJson(skillsFile, skills);
+    return { success: true, count: skills.length };
+}
+
+function fetchCustomSkill(input) {
+    const skills = getSkills();
+    const cleanInput = (input || '').trim();
+    if (!cleanInput) return { success: false, error: 'Skill identifier or URL is required' };
+
+    const inReg = SKILLS_SH_REGISTRY.find(r => r.id === cleanInput || r.name.toLowerCase() === cleanInput.toLowerCase());
+    if (inReg) {
+        return installSkillFromRegistry(inReg.id);
+    }
+
+    let name = cleanInput;
+    let category = 'Community';
+    let tools = ['git', 'cli'];
+    if (cleanInput.includes('/')) {
+        const parts = cleanInput.split('/').filter(Boolean);
+        name = parts[parts.length - 1].replace('.git', '');
+        category = parts[parts.length - 2] ? parts[parts.length - 2].replace('@', '') : 'Git Source';
+    }
+
+    const newSkill = {
+        id: 'skill-fetch-' + Date.now(),
+        name: name.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+        category: category,
+        description: `Custom fetched skill from ${cleanInput}. Sandboxed inside AgentOS /workspace.`,
+        tools: tools,
+        enabledGlobally: true,
+        assignedProjects: ['my-first-app', 'space-bunny-web']
+    };
+
+    skills.unshift(newSkill);
+    writeJson(skillsFile, skills);
+    return { success: true, skill: newSkill };
 }
 
 function toggleSkill(id, field, value) {
@@ -1120,6 +1557,8 @@ module.exports = {
     toggleSkill,
     toggleSkillForProject,
     createSkill,
+    batchToggleSkills,
+    fetchCustomSkill,
     getSkillsShRegistry,
     installSkillFromRegistry,
     getMcpServers,

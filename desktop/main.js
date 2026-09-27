@@ -425,6 +425,14 @@ ipcMain.handle('install-skill-from-registry', (event, skillId) => {
     return store.installSkillFromRegistry(skillId);
 });
 
+ipcMain.handle('batch-toggle-skills', (event, { action, category }) => {
+    return store.batchToggleSkills(action, category);
+});
+
+ipcMain.handle('fetch-custom-skill', (event, input) => {
+    return store.fetchCustomSkill(input);
+});
+
 // --- MCP IPC ---
 ipcMain.handle('get-mcp-servers', () => {
     return store.getMcpServers();
