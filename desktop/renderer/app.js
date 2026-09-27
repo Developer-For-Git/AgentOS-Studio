@@ -47,6 +47,12 @@ function initNavigation() {
     document.getElementById('btn-open-workspace').addEventListener('click', () => {
         window.api.openExplorer();
     });
+
+    if (window.location.hash) {
+        const hashTarget = window.location.hash.replace('#', '');
+        const targetBtn = document.querySelector(`.nav-item[data-page="${hashTarget}"]`);
+        if (targetBtn) targetBtn.click();
+    }
 }
 
 // System Health Polling

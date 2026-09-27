@@ -10,6 +10,22 @@
 
 ---
 
+## 📸 Desktop Application Screenshots
+
+### 1. System Health & Security Dashboard
+*Apple iOS dark mode featuring organic dark oval background gradients, crisp white pill buttons, and Apple Action Orange CTA buttons.*
+![AgentOS Studio Dashboard](assets/agentos-studio-dashboard.png)
+
+### 2. 1-Click Developer Tool Store
+*Install databases, cloud CLIs, and containers inside the sandbox with 1 click without installing bloatware on Windows.*
+![AgentOS Tool Store](assets/agentos-studio-tool-store.png)
+
+### 3. Console Runner & Sandbox Terminal
+*Execute commands as a standard user or with passwordless root (`sudo`) with quick preset chips.*
+![AgentOS Console Runner](assets/agentos-studio-console-runner.png)
+
+---
+
 ## 🌟 What is AgentOS Studio?
 
 **AgentOS Studio** gives autonomous AI coding agents (such as **Claude Code**, **Aider**, **OpenCode**, and custom agent frameworks) a dedicated, sandboxed **Sub-Operating System** (Ubuntu 24.04 LTS running via a hardware-isolated Hyper-V WSL2 microVM) paired with a desktop studio interface designed to Apple's Human Interface Guidelines.
@@ -24,6 +40,76 @@ Giving autonomous AI agents raw terminal access to your primary operating system
 * **Host Drive Blackout (`automount = false`):** Your host `C:\` and `D:\` drives are completely unmounted and invisible.
 * **Windows Binary Blocking (`appendWindowsPath = false`):** Windows executables (`powershell.exe`, `cmd.exe`) are stripped from Linux PATH, preventing escape.
 * **Shared Workspace Gateway:** Only the project directory (`/workspace`) is shared and synced to your Windows machine.
+
+---
+
+## 📊 Interactive System Architecture
+
+```mermaid
+graph TD
+    subgraph Host ["🖥️ Windows Primary Host"]
+        User["👤 Developer"]
+        Desktop["💻 Windows Desktop"]
+        VSCode["📝 Host VS Code / Cursor"]
+        Studio["🍎 AgentOS Studio (Electron UI)"]
+    end
+
+    subgraph Barrier ["🛡️ Zero-Trust Security Boundary"]
+        direction TB
+        Blackout["🚫 Drive Blackout (C:\ & D:\ unmounted)"]
+        PathBlock["🚫 PATH Blackout (powershell.exe / cmd.exe stripped)"]
+    end
+
+    subgraph SubOS ["🐧 AgentOS Virtual Sub-Operating System (Ubuntu 24.04 LTS)"]
+        direction TB
+        Kernel["⚙️ WSL2 Linux Hyper-V MicroVM"]
+        Bridge["⚡ Multi-Protocol Model Bridge (:8000)"]
+        Claude["🤖 Claude Code Agent"]
+        Aider["🤖 Aider CLI Agent"]
+        OpenCode["🤖 OpenCode CLI Agent"]
+        Store["📦 1-Click Tool Store (AWS, Postgres, Redis, Supabase)"]
+        Snapshots["📸 Instant State Snapshots & Rollback"]
+    end
+
+    subgraph Gateway ["📂 Isolated Workspace Gateway"]
+        WorkPartition["📁 /workspace/projects (Synced to Host)"]
+    end
+
+    User --> Studio
+    Studio --> Desktop
+    Studio -.->|IPC Diagnostics| Kernel
+    VSCode <==>|Direct File Edit| WorkPartition
+    Studio ==> Barrier ==> SubOS
+    Claude & Aider & OpenCode -->|Create & Edit Code| WorkPartition
+    Claude & Aider -->|Inference via :8000| Bridge
+    Bridge -->|Free Models| Cloud["☁️ Free Reasoning Models (space-bunny-free)"]
+```
+
+---
+
+## 🔄 Agent Execution & Safety Flow
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Dev as 👤 Developer
+    participant Studio as 🍎 AgentOS Studio
+    participant SubOS as 🐧 AgentOS (Ubuntu 24.04)
+    participant Bridge as ⚡ Internal Bridge (:8000)
+    participant Agent as 🤖 Claude Code / Aider
+    participant Host as 💻 Windows C:\ Drive
+
+    Dev->>Studio: Click "Create Partition"
+    Studio->>SubOS: Provision isolated directory in /workspace
+    Dev->>Agent: Launch agent inside partition
+    Agent->>Bridge: Send inference request (Anthropic / OpenAI format)
+    Bridge-->>Agent: Stream reasoning tokens (space-bunny-free)
+    Agent->>SubOS: Run root commands (apt, npm, python, pipx, test)
+    Agent--xHost: Attempt to read C:\ or personal files (BLOCKED: unmounted)
+    Agent->>SubOS: Save project code in /workspace
+    SubOS-->>Studio: Real-time telemetry (CPU, RAM, Partitions)
+    Studio-->>Dev: Ready to inspect in Windows Explorer / VS Code
+```
 
 ---
 

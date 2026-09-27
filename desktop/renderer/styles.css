@@ -525,7 +525,7 @@ body {
     justify-content: center;
     gap: 8px;
     padding: 9px 18px;
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-pill); /* iOS Pill Button */
     font-size: 0.88rem;
     font-weight: 600;
     cursor: pointer;
