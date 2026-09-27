@@ -117,22 +117,47 @@ if (-not (Test-Path "$desktopDir\node_modules\electron")) {
 # 6. Create Desktop Shortcut
 Write-Host "[6/6] Creating Desktop shortcut..." -ForegroundColor Yellow
 $userDesktop = [Environment]::GetFolderPath("Desktop")
+if (-not $userDesktop -or -not (Test-Path $userDesktop)) {
+    $userDesktop = "$HOME\Desktop"
+}
 $shortcutPath = "$userDesktop\AgentOS.lnk"
 $electronExe = "$desktopDir\node_modules\electron\dist\electron.exe"
+$launcherBat = "$baseDir\launch-agentos-studio.bat"
+$launcherVbs = "$baseDir\launch-agentos-studio.vbs"
+
+$WshShell = New-Object -ComObject WScript.Shell
+$Shortcut = $WshShell.CreateShortcut($shortcutPath)
 
 if (Test-Path $electronExe) {
-    $WshShell = New-Object -ComObject WScript.Shell
-    $Shortcut = $WshShell.CreateShortcut($shortcutPath)
     $Shortcut.TargetPath = $electronExe
     $Shortcut.Arguments = """$desktopDir"""
-    $Shortcut.WorkingDirectory = $desktopDir
-    $Shortcut.Description = "AgentOS Studio - Isolated AI Environment"
-    $Shortcut.Save()
+} elseif (Test-Path $launcherVbs) {
+    $Shortcut.TargetPath = "wscript.exe"
+    $Shortcut.Arguments = """$launcherVbs"""
+} elseif (Test-Path $launcherBat) {
+    $Shortcut.TargetPath = "$launcherBat"
+} else {
+    $Shortcut.TargetPath = "cmd.exe"
+    $Shortcut.Arguments = "/c cd /d ""$desktopDir"" && npm start"
 }
+
+$Shortcut.WorkingDirectory = $desktopDir
+$Shortcut.Description = "AgentOS Studio - Sandboxed AI Agent Environment"
+$Shortcut.Save()
+Write-Host "Created Desktop shortcut: $shortcutPath" -ForegroundColor Green
 
 Write-Host ""
 Write-Host "=======================================================" -ForegroundColor Green
 Write-Host "   🎉 AgentOS Studio Successfully Installed & Ready!  " -ForegroundColor Green
 Write-Host "=======================================================" -ForegroundColor Green
 Write-Host "Launching AgentOS Studio..." -ForegroundColor Cyan
-Start-Process -FilePath $electronExe -ArgumentList """$desktopDir"""
+
+if (Test-Path $electronExe) {
+    Start-Process -FilePath $electronExe -ArgumentList """$desktopDir"""
+} elseif (Test-Path $launcherVbs) {
+    Start-Process -FilePath "wscript.exe" -ArgumentList """$launcherVbs"""
+} elseif (Test-Path $launcherBat) {
+    Start-Process -FilePath "$launcherBat"
+} else {
+    Start-Process -FilePath "cmd.exe" -ArgumentList "/c cd /d ""$desktopDir"" && npm start"
+}
