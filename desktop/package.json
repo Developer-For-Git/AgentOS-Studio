@@ -1,0 +1,12 @@
+{
+  "name": "agentos-studio",
+  "version": "2.0.0",
+  "description": "AgentOS Studio - Next-Gen Isolated AI Environment",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^44.4.5"
+  }
+}
